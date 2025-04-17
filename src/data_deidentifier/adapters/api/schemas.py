@@ -1,20 +1,4 @@
-from typing import Any
-
 from pydantic import BaseModel, Field
-
-from src.data_deidentifier.domain.types.entities import Entity
-
-
-class AnalyzeTextRequest(BaseModel):
-    """Request model for analyzing text.
-
-    This model defines the input parameters for the text analysis endpoint.
-
-    Attributes:
-        text: The text content to analyze for PII entities
-    """
-
-    text: str = Field(..., description="The text content to analyze")
 
 
 class EntityResponse(BaseModel):
@@ -36,42 +20,3 @@ class EntityResponse(BaseModel):
         None,
         description="The path to the field containing the entity (for JSON data)",
     )
-
-
-class AnalyzeTextResponse(BaseModel):
-    """Response model for text analysis.
-
-    This model defines the structure of the response
-    returned by the text analysis endpoint.
-    """
-
-    entities: list[EntityResponse] = Field(
-        ...,
-        description="The entities found in the content",
-    )
-    stats: dict[str, Any] | None = Field(
-        default_factory=dict,
-        description="Statistics about the analysis",
-    )
-
-    @staticmethod
-    def entity_to_response(entity: Entity) -> EntityResponse:
-        """Convert a domain Entity to an API EntityResponse.
-
-        This method transforms an internal domain entity into the format
-        expected in the API response.
-
-        Args:
-            entity: The domain entity to convert
-
-        Returns:
-            The converted entity response object
-        """
-        return EntityResponse(
-            entity_type=str(entity.type),
-            start=entity.start,
-            end=entity.end,
-            score=entity.score,
-            text=entity.text or "",
-            path=entity.path,
-        )

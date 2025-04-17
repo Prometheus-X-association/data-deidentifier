@@ -8,7 +8,7 @@ from src.data_deidentifier.domain.exceptions import (
     AnalyzationError,
     UnknownEntityTypeError,
 )
-from src.data_deidentifier.domain.types.entities import Entity, EntityType
+from src.data_deidentifier.domain.types.entities import Entity
 from src.data_deidentifier.ports.analyzer_port import AnalyzerPort
 
 
@@ -31,21 +31,19 @@ class PresidioAnalyzer(AnalyzerPort):
         self.logger.debug("Presidio Analyzer initialized successfully")
 
     @override
-    def analyze(
+    def analyze_text(
         self,
         text: str,
         language: str,
-        entity_types: list[EntityType] | None = None,
-        min_score: float = 0.5,
+        min_score: float,
     ) -> list[Entity]:
         logger_context = {"text_length": len(text), "language": language}
         self.logger.debug("Starting text analysis", logger_context)
 
         try:
-            presidio_results = self.analyzer.analyze(
+            presidio_results = self.analyzer.analyze_text(
                 text=text,
                 language=language,
-                entities=entity_types,
                 score_threshold=min_score,
             )
         except Exception as e:

@@ -1,25 +1,26 @@
 from abc import ABC, abstractmethod
 
-from src.data_deidentifier.domain.types.entities import Entity, EntityType
+from src.data_deidentifier.domain.types.entities import Entity
 
 
 class AnalyzerPort(ABC):
-    """Contract interface for services who detect PII entities in text."""
+    """Abstract base class defining the analyzer interface.
+
+    Implementations must provide concrete analysis functionality.
+    """
 
     @abstractmethod
-    def analyze(
+    def analyze_text(
         self,
         text: str,
         language: str,
-        entity_types: list[EntityType] | None = None,
-        min_score: float = 0.5,
+        min_score: float,
     ) -> list[Entity]:
         """Analyze text to detect PII entities.
 
         Args:
             text: Text to analyze
             language: Language code of the text
-            entity_types: Specific entity types to detect (if None, detect all)
             min_score: Minimum confidence score threshold
 
         Returns:

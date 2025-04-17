@@ -1,12 +1,13 @@
 from contextlib import asynccontextmanager
 from typing import Any
 
-from configcore import Settings
 from fastapi import FastAPI
 from logger import LogLevel, LoguruLogger
 
+from src.data_deidentifier.adapters.api.analyze.router import router as analyze_router
+from src.data_deidentifier.adapters.infrastructure.config.settings import Settings
+
 from .exception_handler import ExceptionHandler
-from .routers.analyze import router as analyze_router
 
 config = Settings()
 
