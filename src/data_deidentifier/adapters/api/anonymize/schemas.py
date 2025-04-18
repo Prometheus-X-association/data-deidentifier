@@ -15,7 +15,7 @@ class AnonymizeTextRequest(BaseModel):
     text: str = Field(..., description="The text content to anonymize")
 
     entities: list[EntityResponse] | None = Field(
-        default=None,
+        default_factory=list,
         description="Pre-identified entities (if None, text will be analyzed first)",
     )
 

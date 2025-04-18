@@ -1,8 +1,6 @@
 from typing import override
 
 from src.data_deidentifier.adapters.api.schemas import EntityResponse
-from src.data_deidentifier.adapters.presidio.types.entities import PresidioEntityType
-from src.data_deidentifier.domain.exceptions import UnknownEntityTypeError
 from src.data_deidentifier.domain.types.entities import Entity
 from src.data_deidentifier.ports.mapper_port import EntityMapperPort
 
@@ -17,7 +15,7 @@ class PresidioEntityMapper(EntityMapperPort):
     @override
     def domain_to_api(self, entity: Entity) -> EntityResponse:
         return EntityResponse(
-            type=entity.type.value,
+            type=entity.type,
             start=entity.start,
             end=entity.end,
             score=entity.score,
@@ -27,15 +25,8 @@ class PresidioEntityMapper(EntityMapperPort):
 
     @override
     def api_to_domain(self, entity_response: EntityResponse) -> Entity:
-        try:
-            entity_type = PresidioEntityType(entity_response.type)
-        except ValueError as e:
-            raise UnknownEntityTypeError(
-                f"Unknown entity type: {entity_response.type}",
-            ) from e
-
         return Entity(
-            type=entity_type,
+            type=entity_response.type,
             start=entity_response.start,
             end=entity_response.end,
             score=entity_response.score,

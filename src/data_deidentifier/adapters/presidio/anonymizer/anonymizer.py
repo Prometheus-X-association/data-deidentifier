@@ -46,7 +46,7 @@ class PresidioAnonymizer(AnonymizerPort):
         analyzer_results = self._convert_entities_to_presidio_format(entities)
 
         # Prepare operator config
-        entity_types = {entity.type.value for entity in entities}
+        entity_types = {entity.type for entity in entities}
         operator_config = OperatorConfig(operator_name=operator)
         operators = {entity_type: operator_config for entity_type in entity_types}
 
@@ -80,7 +80,7 @@ class PresidioAnonymizer(AnonymizerPort):
         """
         return [
             RecognizerResult(
-                entity_type=entity.type.value,
+                entity_type=entity.type,
                 start=entity.start,
                 end=entity.end,
                 score=entity.score,

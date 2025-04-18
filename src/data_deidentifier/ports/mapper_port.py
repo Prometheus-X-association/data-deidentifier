@@ -38,8 +38,5 @@ class EntityMapperPort(ABC):
 
         Returns:
             The converted domain entity object
-
-        Raises:
-            UnknownEntityTypeError: If entity type is not recognized
         """
         raise NotImplementedError

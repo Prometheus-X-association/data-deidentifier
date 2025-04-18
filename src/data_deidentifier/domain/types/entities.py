@@ -1,16 +1,4 @@
-from enum import StrEnum
-
 from pydantic import BaseModel
-
-
-class EntityType(StrEnum):
-    """Base enum for entity types recognized by the system.
-
-    This enum is intentionally empty to allow inheritance by specific implementations.
-    Subclasses should define their own entity types by adding enum members.
-
-    !!! LEAVE IT EMPTY TO AVOID TypeError !!!
-    """
 
 
 class Entity(BaseModel):
@@ -29,7 +17,7 @@ class Entity(BaseModel):
         path: For JSON data, the dot notation path to the field containing the entity
     """
 
-    type: EntityType
+    type: str
     start: int
     end: int
     score: float

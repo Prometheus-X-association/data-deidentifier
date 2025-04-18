@@ -3,11 +3,7 @@ from typing import override
 from logger import LoggerContract
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
 
-from src.data_deidentifier.adapters.presidio.types.entities import PresidioEntityType
-from src.data_deidentifier.domain.exceptions import (
-    AnalyzationError,
-    UnknownEntityTypeError,
-)
+from src.data_deidentifier.domain.exceptions import AnalyzationError
 from src.data_deidentifier.domain.types.entities import Entity
 from src.data_deidentifier.ports.analyzer_port import AnalyzerPort
 
@@ -86,20 +82,9 @@ class PresidioAnalyzer(AnalyzerPort):
 
         Returns:
             Entity object with our model
-
-        Raises:
-            UnknownEntityTypeError: If entity type is not recognized
         """
         result_dict = result.to_dict()
         self.logger.debug("Analysis result", result_dict)
-
-        entity_type_str = result_dict.get("entity_type")
-        try:
-            entity_type = PresidioEntityType(entity_type_str)
-        except ValueError as e:
-            msg = "Unknown entity type"
-            self.logger.exception(msg, e, result_dict)
-            raise UnknownEntityTypeError(msg) from e
 
         # Extract text segment
         start = result_dict.get("start")
@@ -109,7 +94,7 @@ class PresidioAnalyzer(AnalyzerPort):
         )
 
         return Entity(
-            type=entity_type,
+            type=result_dict.get("entity_type"),
             start=start,
             end=end,
             score=result_dict.get("score"),
