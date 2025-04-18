@@ -1,9 +1,9 @@
+from enum import StrEnum
+
 from pydantic import BaseModel
 
-from src.data_deidentifier.domain.utils.utils_enum import UpperStrEnum
 
-
-class EntityType(UpperStrEnum):
+class EntityType(StrEnum):
     """Base enum for entity types recognized by the system.
 
     This enum is intentionally empty to allow inheritance by specific implementations.

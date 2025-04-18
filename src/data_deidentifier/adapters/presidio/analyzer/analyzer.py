@@ -37,11 +37,16 @@ class PresidioAnalyzer(AnalyzerPort):
         language: str,
         min_score: float,
     ) -> list[Entity]:
-        logger_context = {"text_length": len(text), "language": language}
+        logger_context = {
+            "text_length": len(text),
+            "language": language,
+            "min_score": min_score,
+        }
         self.logger.debug("Starting text analysis", logger_context)
 
         try:
-            presidio_results = self.analyzer.analyze_text(
+            # Analyze text
+            presidio_results = self.analyzer.analyze(
                 text=text,
                 language=language,
                 score_threshold=min_score,
@@ -55,9 +60,10 @@ class PresidioAnalyzer(AnalyzerPort):
             )
             raise AnalyzationError(msg) from e
 
+        # Convert results to our format
         results = []
         for result in presidio_results:
-            entity = self._recognizer_result_to_entity(result=result, text=text)
+            entity = self._convert_result_to_entity(result=result, text=text)
             results.append(entity)
 
         self.logger.info(
@@ -67,7 +73,7 @@ class PresidioAnalyzer(AnalyzerPort):
 
         return results
 
-    def _recognizer_result_to_entity(
+    def _convert_result_to_entity(
         self,
         result: RecognizerResult,
         text: str,

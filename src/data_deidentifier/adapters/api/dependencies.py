@@ -5,7 +5,13 @@ from logger import LoggerContract
 
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
 from src.data_deidentifier.adapters.presidio.analyzer.analyzer import PresidioAnalyzer
+from src.data_deidentifier.adapters.presidio.anonymizer.anonymizer import (
+    PresidioAnonymizer,
+)
+from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
 from src.data_deidentifier.ports.analyzer_port import AnalyzerPort
+from src.data_deidentifier.ports.anonymizer_port import AnonymizerPort
+from src.data_deidentifier.ports.mapper_port import EntityMapperPort
 
 
 async def get_config(request: Request) -> ConfigContract:
@@ -37,8 +43,6 @@ async def get_analyzer(
 ) -> AnalyzerPort:
     """Create and return an analyzer instance.
 
-    This dependency creates a new Presidio analyzer instance for each request.
-
     Args:
         logger: The logger instance obtained via dependency injection
 
@@ -48,3 +52,28 @@ async def get_analyzer(
     return PresidioAnalyzer(
         logger=logger,
     )
+
+
+async def get_anonymizer(
+    logger: Annotated[LoggerContract, Depends(get_logger)],
+) -> AnonymizerPort:
+    """Create and return an anonymizer instance.
+
+    Args:
+        logger: The logger instance
+
+    Returns:
+        An implementation of the anonymizer port
+    """
+    return PresidioAnonymizer(
+        logger=logger,
+    )
+
+
+async def get_mapper() -> EntityMapperPort:
+    """Create and return an mapper instance.
+
+    Returns:
+        An implementation of the mapper port
+    """
+    return PresidioEntityMapper()

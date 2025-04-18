@@ -3,9 +3,10 @@
 from enum import auto
 
 from src.data_deidentifier.domain.types.entities import EntityType
+from src.data_deidentifier.domain.utils.utils_enum import UpperStrEnum
 
 
-class PresidioEntityType(EntityType):
+class PresidioEntityType(EntityType, UpperStrEnum):
     """Enumeration of the types of PII entities that can be detected by Presidio.
 
     This enum extends the base EntityType to define all entity types that

@@ -9,16 +9,15 @@ class AnalyzeTextRequest(BaseModel):
     """Request model for analyzing text.
 
     This model defines the input parameters for the text analysis endpoint.
-
-    Attributes:
-        text: The text content to analyze for PII entities
     """
 
     text: str = Field(..., description="The text content to analyze")
+
     language: str | None = Field(
         default=None,
         description="Language code of the text (e.g., 'en', 'fr', 'es')",
     )
+
     min_score: float | None = Field(
         default=None,
         ge=0.0,
@@ -38,6 +37,7 @@ class AnalyzeTextResponse(BaseModel):
         ...,
         description="The entities found in the content",
     )
+
     meta: dict[str, Any] | None = Field(
         default_factory=dict,
         description="Statistics about the analysis",
