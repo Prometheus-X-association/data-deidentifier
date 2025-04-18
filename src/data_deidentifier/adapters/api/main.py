@@ -5,6 +5,9 @@ from fastapi import FastAPI
 from logger import LogLevel, LoguruLogger
 
 from src.data_deidentifier.adapters.api.analyze.router import router as analyze_router
+from src.data_deidentifier.adapters.api.anonymize.router import (
+    router as anonymize_router,
+)
 from src.data_deidentifier.adapters.infrastructure.config.settings import Settings
 
 from .exception_handler import ExceptionHandler
@@ -47,3 +50,4 @@ exception_handler = ExceptionHandler()
 exception_handler.configure(app=app)
 
 app.include_router(router=analyze_router)
+app.include_router(router=anonymize_router)

@@ -8,3 +8,7 @@ class AnalyzationError(AnalyzeError):
 
 class UnknownEntityTypeError(AnalyzeError):
     """Raised when an unknown entity type is encountered."""
+
+
+class AnonymizationError(Exception):
+    """Raised when an error occurs during the anonymization process."""
