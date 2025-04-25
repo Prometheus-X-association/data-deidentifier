@@ -50,12 +50,14 @@ async def analyze_text(
         analyzer=analyzer,
         default_language=config.get_default_language(),
         default_min_score=config.get_default_minimum_score(),
+        default_entity_types=config.get_default_entity_types(),
     )
 
     analysis_result = service.analyze_text(
         text=query.text,
         language=query.language,
         min_score=query.min_score,
+        entity_types=query.entity_types,
     )
 
     entities = [mapper.domain_to_adapter(e) for e in analysis_result.entities]

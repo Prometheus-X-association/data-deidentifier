@@ -33,11 +33,13 @@ class PresidioAnalyzer(AnalyzerContract):
         text: str,
         language: str,
         min_score: float,
+        entity_types: list[str] | None = None,
     ) -> list[Entity]:
         logger_context = {
             "text_length": len(text),
             "language": language,
             "min_score": min_score,
+            "entity_types": entity_types,
         }
         self.logger.debug("Starting text analysis", logger_context)
 
@@ -47,6 +49,7 @@ class PresidioAnalyzer(AnalyzerContract):
                 text=text,
                 language=language,
                 score_threshold=min_score,
+                entities=entity_types,
             )
         except Exception as e:
             msg = "Unexpected error during entity recognition"

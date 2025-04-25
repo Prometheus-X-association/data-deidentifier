@@ -12,6 +12,7 @@ class AnalyzerContract(ABC):
         text: str,
         language: str,
         min_score: float,
+        entity_types: list[str] | None = None,
     ) -> list[Entity]:
         """Analyze text to detect PII entities.
 
@@ -19,6 +20,7 @@ class AnalyzerContract(ABC):
             text: Text to analyze
             language: Language code of the text
             min_score: Minimum confidence score threshold
+            entity_types: Types of entities to detect (None means all supported types)
 
         Returns:
             List of detected entities

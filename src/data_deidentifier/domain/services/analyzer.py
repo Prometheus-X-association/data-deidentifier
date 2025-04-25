@@ -14,6 +14,7 @@ class AnalyzerService:
         analyzer: AnalyzerContract,
         default_language: str,
         default_min_score: float,
+        default_entity_types: list[str],
     ) -> None:
         """Initialize the analyzer service.
 
@@ -21,16 +22,19 @@ class AnalyzerService:
             analyzer: Implementation of the analyzer contract
             default_language: Default language code to use if not specified
             default_min_score: Default minimum confidence score to use if not specified
+            default_entity_types: Default entity types to detect
         """
         self.analyzer = analyzer
         self.default_language = default_language
         self.default_min_score = default_min_score
+        self.default_entity_types = default_entity_types
 
     def analyze_text(
         self,
         text: str,
         language: str | None = None,
         min_score: float | None = None,
+        entity_types: list[str] | None = None,
     ) -> AnalysisResult:
         """Analyze text to detect PII entities.
 
@@ -38,6 +42,7 @@ class AnalyzerService:
             text: The text content to analyze
             language: Language code of the text (defaults to configured default)
             min_score: Minimum confidence score (defaults to configured default)
+            entity_types: Entity types to detect
 
         Returns:
             An AnalysisResult containing the detected entities and analysis metadata
@@ -46,11 +51,13 @@ class AnalyzerService:
         effective_min_score = (
             min_score if min_score is not None else self.default_min_score
         )
+        effective_entity_types = entity_types or self.default_entity_types
 
         entities = self.analyzer.analyze_text(
             text=text,
             language=effective_language,
             min_score=effective_min_score,
+            entity_types=effective_entity_types,
         )
 
         # Build stats

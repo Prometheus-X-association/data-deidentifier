@@ -25,6 +25,11 @@ class AnalyzeTextRequest(BaseModel):
         description="Minimum confidence score threshold (0.0 to 1.0)",
     )
 
+    entity_types: list[str] | None = Field(
+        default=None,
+        description="Types of entities to detect (defaults to all supported types)",
+    )
+
 
 class AnalyzeTextResponse(BaseModel):
     """Response model for text analysis.

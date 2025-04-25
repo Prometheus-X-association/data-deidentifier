@@ -23,3 +23,12 @@ class ConfigContract(CoreConfigContract):
             The default minimum score as a float between 0.0 and 1.0
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def get_default_entity_types(self) -> list[str]:
+        """Get the default entity types to detect.
+
+        Returns:
+            List of default entity types for text analysis.
+        """
+        raise NotImplementedError
