@@ -2,16 +2,17 @@ from typing import override
 
 from logger import LoggerContract
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import OperatorConfig, RecognizerResult
+from presidio_anonymizer.entities import OperatorConfig
 
+from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
+from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
 from src.data_deidentifier.domain.exceptions import AnonymizationError
-from src.data_deidentifier.domain.types.entities import Entity
+from src.data_deidentifier.domain.types.entity import Entity
 from src.data_deidentifier.domain.types.operators import AnonymizationOperator
-from src.data_deidentifier.ports.anonymizer_port import AnonymizerPort
 
 
-class PresidioAnonymizer(AnonymizerPort):
-    """Implementation of anonymizer port using Microsoft Presidio."""
+class PresidioAnonymizer(AnonymizerContract):
+    """Implementation of anonymizer contract using Microsoft Presidio."""
 
     def __init__(self, logger: LoggerContract) -> None:
         """Initialize the Presidio anonymizer.
@@ -43,7 +44,10 @@ class PresidioAnonymizer(AnonymizerPort):
         self.logger.debug("Starting text anonymization", logger_context)
 
         # Convert our entities to Presidio's RecognizerResult format
-        analyzer_results = self._convert_entities_to_presidio_format(entities)
+        analyzer_results = [
+            PresidioEntityMapper.entity_to_presidio_result(entity=entity)
+            for entity in entities
+        ]
 
         # Prepare operator config
         entity_types = {entity.type for entity in entities}
@@ -65,25 +69,3 @@ class PresidioAnonymizer(AnonymizerPort):
         self.logger.info("Text anonymization completed successfully", logger_context)
 
         return result.text
-
-    def _convert_entities_to_presidio_format(
-        self,
-        entities: list[Entity],
-    ) -> list[RecognizerResult]:
-        """Convert our Entity objects to Presidio's RecognizerResult format.
-
-        Args:
-            entities: List of entities to convert
-
-        Returns:
-            List of Presidio RecognizerResult objects
-        """
-        return [
-            RecognizerResult(
-                entity_type=entity.type,
-                start=entity.start,
-                end=entity.end,
-                score=entity.score,
-            )
-            for entity in entities
-        ]

@@ -3,15 +3,15 @@ from typing import Annotated
 from fastapi import Depends, Request
 from logger import LoggerContract
 
+from src.data_deidentifier.adapters.api.mapper import ApiEntityMapper
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
 from src.data_deidentifier.adapters.presidio.analyzer.analyzer import PresidioAnalyzer
 from src.data_deidentifier.adapters.presidio.anonymizer.anonymizer import (
     PresidioAnonymizer,
 )
-from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
-from src.data_deidentifier.ports.analyzer_port import AnalyzerPort
-from src.data_deidentifier.ports.anonymizer_port import AnonymizerPort
-from src.data_deidentifier.ports.mapper_port import EntityMapperPort
+from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
+from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
+from src.data_deidentifier.domain.contracts.mapper import EntityMapperContract
 
 
 async def get_config(request: Request) -> ConfigContract:
@@ -40,14 +40,14 @@ async def get_logger(request: Request) -> LoggerContract:
 
 async def get_analyzer(
     logger: Annotated[LoggerContract, Depends(get_logger)],
-) -> AnalyzerPort:
+) -> AnalyzerContract:
     """Create and return an analyzer instance.
 
     Args:
         logger: The logger instance obtained via dependency injection
 
     Returns:
-        An implementation of the analyzer port
+        An implementation of the analyzer contract
     """
     return PresidioAnalyzer(
         logger=logger,
@@ -56,24 +56,24 @@ async def get_analyzer(
 
 async def get_anonymizer(
     logger: Annotated[LoggerContract, Depends(get_logger)],
-) -> AnonymizerPort:
+) -> AnonymizerContract:
     """Create and return an anonymizer instance.
 
     Args:
         logger: The logger instance
 
     Returns:
-        An implementation of the anonymizer port
+        An implementation of the anonymizer contract
     """
     return PresidioAnonymizer(
         logger=logger,
     )
 
 
-async def get_mapper() -> EntityMapperPort:
-    """Create and return an mapper instance.
+async def get_mapper() -> EntityMapperContract:
+    """Create and return a mapper instance.
 
     Returns:
-        An implementation of the mapper port
+        An implementation of the mapper contract
     """
-    return PresidioEntityMapper()
+    return ApiEntityMapper()

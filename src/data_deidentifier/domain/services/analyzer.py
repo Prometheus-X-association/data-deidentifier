@@ -1,0 +1,67 @@
+from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
+from src.data_deidentifier.domain.types.analysis_result import AnalysisResult
+
+
+class AnalyzerService:
+    """Service for analyzing text to detect personally identifiable information.
+
+    This service orchestrates the text analysis process, manages default values,
+    and produces structured analysis results.
+    """
+
+    def __init__(
+        self,
+        analyzer: AnalyzerContract,
+        default_language: str,
+        default_min_score: float,
+    ) -> None:
+        """Initialize the analyzer service.
+
+        Args:
+            analyzer: Implementation of the analyzer contract
+            default_language: Default language code to use if not specified
+            default_min_score: Default minimum confidence score to use if not specified
+        """
+        self.analyzer = analyzer
+        self.default_language = default_language
+        self.default_min_score = default_min_score
+
+    def analyze_text(
+        self,
+        text: str,
+        language: str | None = None,
+        min_score: float | None = None,
+    ) -> AnalysisResult:
+        """Analyze text to detect PII entities.
+
+        Args:
+            text: The text content to analyze
+            language: Language code of the text (defaults to configured default)
+            min_score: Minimum confidence score (defaults to configured default)
+
+        Returns:
+            An AnalysisResult containing the detected entities and analysis metadata
+        """
+        effective_language = language or self.default_language
+        effective_min_score = (
+            min_score if min_score is not None else self.default_min_score
+        )
+
+        entities = self.analyzer.analyze_text(
+            text=text,
+            language=effective_language,
+            min_score=effective_min_score,
+        )
+
+        # Build stats
+        entity_stats = {}
+        for entity in entities:
+            entity_type = entity.type
+            entity_stats[entity_type] = entity_stats.get(entity_type, 0) + 1
+
+        return AnalysisResult(
+            entities=entities,
+            language=effective_language,
+            min_score=effective_min_score,
+            entity_stats=entity_stats,
+        )

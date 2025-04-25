@@ -1,13 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.data_deidentifier.domain.types.entities import Entity
+from src.data_deidentifier.domain.types.entity import Entity
 
 
-class AnalyzerPort(ABC):
-    """Abstract base class defining the analyzer interface.
-
-    Implementations must provide concrete analysis functionality.
-    """
+class AnalyzerContract(ABC):
+    """Abstract base class defining the analyzer interface."""
 
     @abstractmethod
     def analyze_text(

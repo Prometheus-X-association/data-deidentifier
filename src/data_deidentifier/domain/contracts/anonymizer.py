@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
-from src.data_deidentifier.domain.types.entities import Entity
+from src.data_deidentifier.domain.types.entity import Entity
 from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 
-class AnonymizerPort(ABC):
-    """Abstract port for anonymization operations."""
+class AnonymizerContract(ABC):
+    """Abstract base class defining the anonymizer interface."""
 
     @abstractmethod
     def anonymize_text(

@@ -2,7 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.data_deidentifier.adapters.api.schemas import EntityResponse
+from src.data_deidentifier.adapters.api.response import EntityResponse
 from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 

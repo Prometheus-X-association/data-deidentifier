@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from logger import LogLevel
 
-from src.data_deidentifier.domain.exceptions import AnalyzationError
+from src.data_deidentifier.domain.exceptions import AnalyzationError, AnonymizationError
 
 
 class ExceptionHandler:
@@ -22,6 +22,7 @@ class ExceptionHandler:
             ValueError: status.HTTP_400_BAD_REQUEST,
             TypeError: status.HTTP_500_INTERNAL_SERVER_ERROR,
             AnalyzationError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+            AnonymizationError: status.HTTP_500_INTERNAL_SERVER_ERROR,
         }
 
     def configure(self, app: FastAPI) -> None:

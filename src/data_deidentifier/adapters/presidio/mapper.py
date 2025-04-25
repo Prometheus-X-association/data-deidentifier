@@ -1,35 +1,52 @@
-from typing import override
+from presidio_analyzer import RecognizerResult
 
-from src.data_deidentifier.adapters.api.schemas import EntityResponse
-from src.data_deidentifier.domain.types.entities import Entity
-from src.data_deidentifier.ports.mapper_port import EntityMapperPort
+from src.data_deidentifier.domain.types.entity import Entity
 
 
-class PresidioEntityMapper(EntityMapperPort):
-    """Implementation of the entity mapper port for Microsoft Presidio.
+class PresidioEntityMapper:
+    """Handles the conversion between domain entities and Presidio's formats."""
 
-    This class provides bidirectional conversion between domain entity models
-    and both API response models and Presidio-specific entity formats.
-    """
+    @staticmethod
+    def presidio_result_to_entity(result: RecognizerResult, text: str) -> Entity:
+        """Convert a Presidio RecognizerResult to our Entity model.
 
-    @override
-    def domain_to_api(self, entity: Entity) -> EntityResponse:
-        return EntityResponse(
-            type=entity.type,
+        Args:
+            result: Presidio's analysis result
+            text: Original text (to extract the entity text)
+
+        Returns:
+            Entity object with our model
+        """
+        result_dict = result.to_dict()
+
+        # Extract text segment
+        start = result_dict.get("start")
+        end = result_dict.get("end")
+        entity_text = (
+            text[start:end] if text and start is not None and end is not None else None
+        )
+
+        return Entity(
+            type=result_dict.get("entity_type"),
+            start=start,
+            end=end,
+            score=result_dict.get("score"),
+            text=entity_text,
+        )
+
+    @staticmethod
+    def entity_to_presidio_result(entity: Entity) -> RecognizerResult:
+        """Convert our Entity model to Presidio's RecognizerResult format.
+
+        Args:
+            entity: Entity object with our model
+
+        Returns:
+            Presidio's analysis result
+        """
+        return RecognizerResult(
+            entity_type=entity.type,
             start=entity.start,
             end=entity.end,
             score=entity.score,
-            text=entity.text,
-            path=entity.path,
-        )
-
-    @override
-    def api_to_domain(self, entity_response: EntityResponse) -> Entity:
-        return Entity(
-            type=entity_response.type,
-            start=entity_response.start,
-            end=entity_response.end,
-            score=entity_response.score,
-            text=entity_response.text,
-            path=entity_response.path,
         )

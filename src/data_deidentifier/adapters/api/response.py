@@ -4,8 +4,7 @@ from pydantic import BaseModel, Field
 class EntityResponse(BaseModel):
     """Response model for an entity found in the content.
 
-    This model represents a PII entity detected in the analyzed content
-    formatted for API response.
+    This model represents a PII entity detected in the analyzed content.
     """
 
     type: str = Field(..., description="The type of PII entity detected")

@@ -8,8 +8,9 @@ from src.data_deidentifier.adapters.api.dependencies import (
     get_mapper,
 )
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.ports.analyzer_port import AnalyzerPort
-from src.data_deidentifier.ports.mapper_port import EntityMapperPort
+from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
+from src.data_deidentifier.domain.contracts.mapper import EntityMapperContract
+from src.data_deidentifier.domain.services.analyzer import AnalyzerService
 
 from .schemas import (
     AnalyzeTextRequest,
@@ -27,8 +28,8 @@ router = APIRouter(prefix="/analyze")
 )
 async def analyze_text(
     query: AnalyzeTextRequest,
-    analyzer: Annotated[AnalyzerPort, Depends(get_analyzer)],
-    mapper: Annotated[EntityMapperPort, Depends(get_mapper)],
+    analyzer: Annotated[AnalyzerContract, Depends(get_analyzer)],
+    mapper: Annotated[EntityMapperContract, Depends(get_mapper)],
     config: Annotated[ConfigContract, Depends(get_config)],
 ) -> AnalyzeTextResponse:
     """Analyze text content for PII entities.
@@ -45,34 +46,25 @@ async def analyze_text(
     Returns:
         Analysis results containing the detected entities and statistics
     """
-    language = query.language or config.get_default_language()
-    min_score = (
-        query.min_score
-        if query.min_score is not None
-        else config.get_default_minimum_score()
-    )
-    input_text = query.text
-
-    entities = analyzer.analyze_text(
-        text=input_text,
-        language=language,
-        min_score=min_score,
+    service = AnalyzerService(
+        analyzer=analyzer,
+        default_language=config.get_default_language(),
+        default_min_score=config.get_default_minimum_score(),
     )
 
-    entity_responses = []
-    type_stats = {}  # Number of entity type occurrences
-    for entity in entities:
-        # Convert domain entities to API entities for response
-        entity_responses.append(mapper.domain_to_api(entity))
+    analysis_result = service.analyze_text(
+        text=query.text,
+        language=query.language,
+        min_score=query.min_score,
+    )
 
-        entity_type = str(entity.type)
-        type_stats[entity_type] = type_stats.get(entity_type, 0) + 1
+    entities = [mapper.domain_to_adapter(e) for e in analysis_result.entities]
 
     return AnalyzeTextResponse(
-        entities=entity_responses,
+        entities=entities,
         meta={
-            "language": language,
-            "min_score": min_score,
-            "entities": type_stats,
+            "language": analysis_result.language,
+            "min_score": analysis_result.min_score,
+            "entities": analysis_result.entity_stats,
         },
     )

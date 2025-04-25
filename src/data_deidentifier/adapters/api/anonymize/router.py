@@ -2,16 +2,17 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from src.data_deidentifier.adapters.api.anonymize.schemas import (
-    AnonymizeTextRequest,
-    AnonymizeTextResponse,
-)
 from src.data_deidentifier.adapters.api.dependencies import (
     get_anonymizer,
     get_mapper,
 )
-from src.data_deidentifier.ports.anonymizer_port import AnonymizerPort
-from src.data_deidentifier.ports.mapper_port import EntityMapperPort
+from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
+from src.data_deidentifier.domain.contracts.mapper import EntityMapperContract
+
+from .schemas import (
+    AnonymizeTextRequest,
+    AnonymizeTextResponse,
+)
 
 router = APIRouter(prefix="/anonymize")
 
@@ -24,8 +25,8 @@ router = APIRouter(prefix="/anonymize")
 )
 async def anonymize_text(
     query: AnonymizeTextRequest,
-    anonymizer: Annotated[AnonymizerPort, Depends(get_anonymizer)],
-    mapper: Annotated[EntityMapperPort, Depends(get_mapper)],
+    anonymizer: Annotated[AnonymizerContract, Depends(get_anonymizer)],
+    mapper: Annotated[EntityMapperContract, Depends(get_mapper)],
 ) -> AnonymizeTextResponse:
     """Anonymize PII entities in text content.
 
@@ -42,7 +43,7 @@ async def anonymize_text(
     text = query.text
 
     # Convert provided API entities to domain entities
-    entities = [mapper.api_to_domain(e) for e in query.entities]
+    entities = [mapper.adapter_to_domain(e) for e in query.entities]
 
     # Anonymize the text
     anonymized_text = anonymizer.anonymize_text(

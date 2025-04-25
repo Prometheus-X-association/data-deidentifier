@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 
-class Entity(BaseModel):
+@dataclass
+class Entity:
     """Represents a detected PII entity in content.
 
     This model captures information about a personally identifiable information (PII)

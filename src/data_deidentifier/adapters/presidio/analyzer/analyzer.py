@@ -1,15 +1,16 @@
 from typing import override
 
 from logger import LoggerContract
-from presidio_analyzer import AnalyzerEngine, RecognizerResult
+from presidio_analyzer import AnalyzerEngine
 
+from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
+from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
 from src.data_deidentifier.domain.exceptions import AnalyzationError
-from src.data_deidentifier.domain.types.entities import Entity
-from src.data_deidentifier.ports.analyzer_port import AnalyzerPort
+from src.data_deidentifier.domain.types.entity import Entity
 
 
-class PresidioAnalyzer(AnalyzerPort):
-    """Implementation of the analyzer port using Microsoft Presidio.
+class PresidioAnalyzer(AnalyzerContract):
+    """Implementation of the analyzer contract using Microsoft Presidio.
 
     This class uses the Presidio Analyzer to detect PII entities in text.
     """
@@ -57,10 +58,13 @@ class PresidioAnalyzer(AnalyzerPort):
             raise AnalyzationError(msg) from e
 
         # Convert results to our format
-        results = []
-        for result in presidio_results:
-            entity = self._convert_result_to_entity(result=result, text=text)
-            results.append(entity)
+        results = [
+            PresidioEntityMapper.presidio_result_to_entity(
+                result=result,
+                text=text,
+            )
+            for result in presidio_results
+        ]
 
         self.logger.info(
             "Analysis completed successfully",
@@ -68,35 +72,3 @@ class PresidioAnalyzer(AnalyzerPort):
         )
 
         return results
-
-    def _convert_result_to_entity(
-        self,
-        result: RecognizerResult,
-        text: str,
-    ) -> Entity:
-        """Convert a Presidio RecognizerResult to our Entity model.
-
-        Args:
-            result: Presidio's analysis result
-            text: Original text (to extract the entity text)
-
-        Returns:
-            Entity object with our model
-        """
-        result_dict = result.to_dict()
-        self.logger.debug("Analysis result", result_dict)
-
-        # Extract text segment
-        start = result_dict.get("start")
-        end = result_dict.get("end")
-        entity_text = (
-            text[start:end] if text and start is not None and end is not None else None
-        )
-
-        return Entity(
-            type=result_dict.get("entity_type"),
-            start=start,
-            end=end,
-            score=result_dict.get("score"),
-            text=entity_text,
-        )
