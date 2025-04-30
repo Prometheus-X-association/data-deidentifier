@@ -17,8 +17,9 @@ class EntityMapperContract(ABC, Generic[AdapterEntity]):
         T: The type of external representation
     """
 
+    @staticmethod
     @abstractmethod
-    def domain_to_adapter(self, entity: Entity) -> AdapterEntity:
+    def domain_to_adapter(entity: Entity) -> AdapterEntity:
         """Convert a domain Entity to an adapter entity.
 
         This method transforms an internal domain entity
@@ -32,8 +33,9 @@ class EntityMapperContract(ABC, Generic[AdapterEntity]):
         """
         raise NotImplementedError
 
+    @staticmethod
     @abstractmethod
-    def adapter_to_domain(self, entity_response: AdapterEntity) -> Entity:
+    def adapter_to_domain(entity_response: AdapterEntity) -> Entity:
         """Convert an adapter entity to a domain entity.
 
         This method transforms an adapter Entity into the internal domain format.

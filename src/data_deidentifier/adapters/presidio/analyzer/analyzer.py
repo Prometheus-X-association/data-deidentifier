@@ -23,7 +23,7 @@ class PresidioAnalyzer(AnalyzerContract):
         """
         self.logger = logger
 
-        self.analyzer = AnalyzerEngine()
+        self.presidio_analyzer = AnalyzerEngine()
 
         self.logger.debug("Presidio Analyzer initialized successfully")
 
@@ -35,6 +35,8 @@ class PresidioAnalyzer(AnalyzerContract):
         min_score: float,
         entity_types: list[str] | None = None,
     ) -> list[Entity]:
+        language = language.lower()
+
         logger_context = {
             "text_length": len(text),
             "language": language,
@@ -45,7 +47,7 @@ class PresidioAnalyzer(AnalyzerContract):
 
         try:
             # Analyze text
-            presidio_results = self.analyzer.analyze(
+            presidio_results = self.presidio_analyzer.analyze(
                 text=text,
                 language=language,
                 score_threshold=min_score,

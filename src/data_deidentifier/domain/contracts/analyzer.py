@@ -26,6 +26,6 @@ class AnalyzerContract(ABC):
             List of detected entities
 
         Raises:
-            AnalyzationError: If analysis fails
+            AnalysisError: If analysis fails
         """
         raise NotImplementedError

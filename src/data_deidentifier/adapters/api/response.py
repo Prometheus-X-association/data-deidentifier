@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class EntityResponse(BaseModel):
@@ -10,12 +10,30 @@ class EntityResponse(BaseModel):
     type: str = Field(..., description="The type of PII entity detected")
     start: int = Field(
         ...,
+        ge=0,
         description="The start position of the entity in the content",
     )
-    end: int = Field(..., description="The end position of the entity in the content")
-    score: float = Field(..., description="The confidence score of the detection")
+    end: int = Field(
+        ...,
+        ge=0,
+        description="The end position of the entity in the content",
+    )
+    score: float = Field(
+        ...,
+        ge=0.0,
+        description="The confidence score of the detection",
+    )
     text: str | None = Field(default=None, description="The text of the entity")
     path: str | None = Field(
         None,
         description="The path to the field containing the entity (for JSON data)",
     )
+
+    @model_validator(mode="after")
+    def validate_positions(self) -> "EntityResponse":
+        """Validate that end position is greater than or equal to start position."""
+        if self.end < self.start:
+            raise ValueError(
+                "end position must be greater than or equal to start position",
+            )
+        return self

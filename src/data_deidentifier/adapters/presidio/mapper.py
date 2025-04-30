@@ -17,20 +17,18 @@ class PresidioEntityMapper:
         Returns:
             Entity object with our model
         """
-        result_dict = result.to_dict()
-
         # Extract text segment
-        start = result_dict.get("start")
-        end = result_dict.get("end")
+        start = result.start
+        end = result.end
         entity_text = (
             text[start:end] if text and start is not None and end is not None else None
         )
 
         return Entity(
-            type=result_dict.get("entity_type"),
+            type=result.entity_type,
             start=start,
             end=end,
-            score=result_dict.get("score"),
+            score=result.score,
             text=entity_text,
         )
 

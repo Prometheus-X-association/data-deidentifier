@@ -16,24 +16,29 @@ class AnonymizeTextRequest(BaseModel):
 
     entities: list[EntityResponse] | None = Field(
         default_factory=list,
-        description="Pre-identified entities (if None, text will be analyzed first)",
+        description="Pre-identified entities (if empty, text will be analyzed first)",
     )
 
-    operator: AnonymizationOperator = Field(
-        default=AnonymizationOperator.REPLACE,
+    operator: AnonymizationOperator | None = Field(
+        default=None,
         description="Anonymization method",
     )
 
     language: str | None = Field(
         default=None,
-        description="Language code of the text (for analysis phase)",
+        description="Language code of the text (e.g., 'en', 'fr', 'es')",
     )
 
     min_score: float | None = Field(
         default=None,
         ge=0.0,
         le=1.0,
-        description="Minimum confidence score threshold (for analysis phase)",
+        description="Minimum confidence score threshold (0.0 to 1.0)",
+    )
+
+    entity_types: list[str] | None = Field(
+        default=None,
+        description="Types of entities to detect (defaults to all supported types)",
     )
 
 

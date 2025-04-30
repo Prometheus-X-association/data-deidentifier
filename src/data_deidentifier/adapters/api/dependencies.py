@@ -3,15 +3,15 @@ from typing import Annotated
 from fastapi import Depends, Request
 from logger import LoggerContract
 
-from src.data_deidentifier.adapters.api.mapper import ApiEntityMapper
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
 from src.data_deidentifier.adapters.presidio.analyzer.analyzer import PresidioAnalyzer
 from src.data_deidentifier.adapters.presidio.anonymizer.anonymizer import (
     PresidioAnonymizer,
 )
+from src.data_deidentifier.adapters.presidio.validator import PresidioValidator
 from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
 from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
-from src.data_deidentifier.domain.contracts.mapper import EntityMapperContract
+from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 
 
 async def get_config(request: Request) -> ConfigContract:
@@ -70,10 +70,17 @@ async def get_anonymizer(
     )
 
 
-async def get_mapper() -> EntityMapperContract:
-    """Create and return a mapper instance.
+async def get_validator(
+    logger: Annotated[LoggerContract, Depends(get_logger)],
+) -> EntityTypeValidatorContract:
+    """Create and return an entity type validator instance.
+
+    Args:
+        logger: The logger instance
 
     Returns:
-        An implementation of the mapper contract
+        An implementation of the entity type validator contract
     """
-    return ApiEntityMapper()
+    return PresidioValidator(
+        logger=logger,
+    )

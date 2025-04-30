@@ -22,7 +22,7 @@ class PresidioAnonymizer(AnonymizerContract):
         """
         self.logger = logger
 
-        self.anonymizer = AnonymizerEngine()
+        self.presidio_anonymizer = AnonymizerEngine()
 
         self.logger.debug("Presidio Anonymizer initialized successfully")
 
@@ -50,13 +50,13 @@ class PresidioAnonymizer(AnonymizerContract):
         ]
 
         # Prepare operator config
-        entity_types = {entity.type for entity in entities}
+        entity_types = {entity.entity_type for entity in analyzer_results}
         operator_config = OperatorConfig(operator_name=operator)
         operators = {entity_type: operator_config for entity_type in entity_types}
 
         try:
             # Anonymize the text
-            result = self.anonymizer.anonymize(
+            result = self.presidio_anonymizer.anonymize(
                 text=text,
                 analyzer_results=analyzer_results,
                 operators=operators,

@@ -12,8 +12,9 @@ class ApiEntityMapper(EntityMapperContract[EntityResponse]):
     ensuring proper data formatting for external API communication.
     """
 
+    @staticmethod
     @override
-    def domain_to_adapter(self, entity: Entity) -> EntityResponse:
+    def domain_to_adapter(entity: Entity) -> EntityResponse:
         return EntityResponse(
             type=entity.type,
             start=entity.start,
@@ -23,8 +24,9 @@ class ApiEntityMapper(EntityMapperContract[EntityResponse]):
             path=entity.path,
         )
 
+    @staticmethod
     @override
-    def adapter_to_domain(self, entity_response: EntityResponse) -> Entity:
+    def adapter_to_domain(entity_response: EntityResponse) -> Entity:
         return Entity(
             type=entity_response.type,
             start=entity_response.start,

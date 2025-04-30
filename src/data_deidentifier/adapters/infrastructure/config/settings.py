@@ -1,7 +1,9 @@
-from typing import override
+from typing import Annotated, override
 
 from configcore import Settings as CoreSettings
-from pydantic import Field
+from pydantic import BeforeValidator, Field
+
+from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 from .contract import ConfigContract
 
@@ -15,6 +17,15 @@ class Settings(CoreSettings, ConfigContract):
 
     default_entity_types: list[str] = Field(default_factory=list)
 
+    default_anonymization_operator: Annotated[
+        AnonymizationOperator,
+        BeforeValidator(
+            lambda v: AnonymizationOperator[v.upper()] if isinstance(v, str) else v,
+        ),
+    ] = Field(
+        default=AnonymizationOperator.REPLACE,
+    )
+
     @override
     def get_default_language(self) -> str:
         return self.default_language
@@ -26,3 +37,7 @@ class Settings(CoreSettings, ConfigContract):
     @override
     def get_default_entity_types(self) -> list[str]:
         return self.default_entity_types
+
+    @override
+    def get_default_anonymization_operator(self) -> AnonymizationOperator:
+        return self.default_anonymization_operator

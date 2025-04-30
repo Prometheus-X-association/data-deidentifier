@@ -2,6 +2,8 @@ from abc import abstractmethod
 
 from configcore import ConfigContract as CoreConfigContract
 
+from src.data_deidentifier.domain.types.operators import AnonymizationOperator
+
 
 class ConfigContract(CoreConfigContract):
     """Contract for application configuration."""
@@ -30,5 +32,14 @@ class ConfigContract(CoreConfigContract):
 
         Returns:
             List of default entity types for text analysis.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_default_anonymization_operator(self) -> AnonymizationOperator:
+        """Get the default anonymization operator.
+
+        Returns:
+            The default anonymization operator
         """
         raise NotImplementedError
