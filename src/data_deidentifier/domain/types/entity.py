@@ -15,7 +15,6 @@ class Entity:
         end: The ending position of the entity in the content
         score: The confidence score of the detection (0.0 to 1.0)
         text: The actual text of the detected entity
-        path: For JSON data, the dot notation path to the field containing the entity
     """
 
     type: str
@@ -23,4 +22,3 @@ class Entity:
     end: int
     score: float
     text: str | None = None
-    path: str | None = None  # For JSON data, dot notation path to the field
