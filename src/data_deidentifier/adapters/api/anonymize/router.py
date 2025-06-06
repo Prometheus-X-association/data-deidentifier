@@ -3,17 +3,13 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from src.data_deidentifier.adapters.api.dependencies import (
-    get_analyzer,
     get_anonymizer,
     get_config,
     get_validator,
 )
-from src.data_deidentifier.adapters.api.mapper import ApiEntityMapper
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
 from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
-from src.data_deidentifier.domain.services.analyze import AnalyzeService
 from src.data_deidentifier.domain.services.anonymization import AnonymizationService
 
 from .schemas import (
@@ -33,65 +29,48 @@ router = APIRouter(prefix="/anonymize")
 async def anonymize_text(
     query: AnonymizeTextRequest,
     anonymizer: Annotated[AnonymizerContract, Depends(get_anonymizer)],
-    analyzer: Annotated[AnalyzerContract, Depends(get_analyzer)],
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     config: Annotated[ConfigContract, Depends(get_config)],
 ) -> AnonymizeTextResponse:
     """Anonymize PII entities in text content.
 
-    If entities are not provided, the text will be analyzed first to detect them.
-
     Args:
         query: The request containing text to anonymize
         anonymizer: The anonymizer implementation
-        analyzer: The analyzer implementation, needed if entities are not provided
         validator: The validator implementation
         config: The application configuration
 
     Returns:
         Anonymized text and information about the entities that were anonymized
     """
+    effective_operator = query.operator or config.get_default_anonymization_operator()
+    effective_language = query.language or config.get_default_language()
+    effective_min_score = (
+        query.min_score
+        if query.min_score is not None
+        else config.get_default_minimum_score()
+    )
+    effective_entity_types = query.entity_types or config.get_default_entity_types()
+
     anonymize_service = AnonymizationService(
         anonymizer=anonymizer,
         validator=validator,
-        default_operator=config.get_default_anonymization_operator(),
     )
 
-    text = query.text
-
-    if query.entities:
-        # Convert provided API entities to domain entities
-        entities = [ApiEntityMapper.adapter_to_domain(e) for e in query.entities]
-    else:
-        # Retrieve entities via analyze service
-        analyze_service = AnalyzeService(
-            analyzer=analyzer,
-            validator=validator,
-            default_language=config.get_default_language(),
-            default_min_score=config.get_default_minimum_score(),
-            default_entity_types=config.get_default_entity_types(),
-        )
-
-        analysis_result = analyze_service.analyze_text(
-            text=query.text,
-            language=query.language,
-            min_score=query.min_score,
-            entity_types=query.entity_types,
-        )
-
-        entities = analysis_result.entities
-
-    # Anonymize the text
     result = anonymize_service.anonymize_text(
-        text=text,
-        entities=entities,
-        operator=query.operator,
+        text=query.text,
+        operator=effective_operator,
+        language=effective_language,
+        min_score=effective_min_score,
+        entity_types=effective_entity_types,
     )
 
     return AnonymizeTextResponse(
         anonymized_text=result.anonymized_text,
+        detected_entities=result.detected_entities,
         meta={
-            "operator": result.operator,
-            "entities": result.entity_stats,
+            "operator": effective_operator,
+            "language": effective_language,
+            "min_score": effective_min_score,
         },
     )

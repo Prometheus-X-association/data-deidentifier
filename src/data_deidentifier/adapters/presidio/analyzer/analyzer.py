@@ -1,19 +1,11 @@
-from typing import override
-
 from logger import LoggerContract
-from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, RecognizerResult
 
-from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
-from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
-from src.data_deidentifier.domain.exceptions import AnalyzationError
-from src.data_deidentifier.domain.types.entity import Entity
+from src.data_deidentifier.adapters.presidio.exceptions import AnalyzeError
 
 
-class PresidioAnalyzer(AnalyzerContract):
-    """Implementation of the analyzer contract using Microsoft Presidio.
-
-    This class uses the Presidio Analyzer to detect PII entities in text.
-    """
+class PresidioAnalyzer:
+    """Uses the Presidio Analyzer to detect PII entities in text."""
 
     def __init__(self, logger: LoggerContract) -> None:
         """Initialize the Presidio analyzer.
@@ -27,14 +19,27 @@ class PresidioAnalyzer(AnalyzerContract):
 
         self.logger.debug("Presidio Analyzer initialized successfully")
 
-    @override
     def analyze_text(
         self,
         text: str,
         language: str,
         min_score: float,
         entity_types: list[str] | None = None,
-    ) -> list[Entity]:
+    ) -> list[RecognizerResult]:
+        """Analyze text to detect PII entities.
+
+        Args:
+            text: Text to analyze
+            language: Language code of the text
+            min_score: Minimum confidence score threshold
+            entity_types: Types of entities to detect (None means all supported types)
+
+        Returns:
+            List of detected entities
+
+        Raises:
+            AnalyzeError: If analysis fails
+        """
         language = language.lower()
 
         logger_context = {
@@ -60,20 +65,11 @@ class PresidioAnalyzer(AnalyzerContract):
                 e,
                 logger_context,
             )
-            raise AnalyzationError(msg) from e
-
-        # Convert results to our format
-        results = [
-            PresidioEntityMapper.presidio_result_to_entity(
-                result=result,
-                text=text,
-            )
-            for result in presidio_results
-        ]
+            raise AnalyzeError(msg) from e
 
         self.logger.info(
             "Analysis completed successfully",
-            {"entities_found": len(results), **logger_context},
+            {"entities_found": len(presidio_results), **logger_context},
         )
 
-        return results
+        return presidio_results

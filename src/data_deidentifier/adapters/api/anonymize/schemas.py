@@ -2,7 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.data_deidentifier.adapters.api.response import EntityResponse
+from src.data_deidentifier.domain.types.entity import Entity
 from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 
@@ -13,11 +13,6 @@ class AnonymizeTextRequest(BaseModel):
     """
 
     text: str = Field(..., description="The text content to anonymize")
-
-    entities: list[EntityResponse] | None = Field(
-        default_factory=list,
-        description="Pre-identified entities (if empty, text will be analyzed first)",
-    )
 
     operator: AnonymizationOperator | None = Field(
         default=None,
@@ -50,6 +45,11 @@ class AnonymizeTextResponse(BaseModel):
     """
 
     anonymized_text: str = Field(..., description="The anonymized text content")
+
+    detected_entities: list[Entity] = Field(
+        ...,
+        description="List of detected PII entities",
+    )
 
     meta: dict[str, Any] | None = Field(
         default_factory=dict,

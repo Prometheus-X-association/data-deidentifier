@@ -31,20 +31,3 @@ class PresidioEntityMapper:
             score=result.score,
             text=entity_text,
         )
-
-    @staticmethod
-    def entity_to_presidio_result(entity: Entity) -> RecognizerResult:
-        """Convert our Entity model to Presidio's RecognizerResult format.
-
-        Args:
-            entity: Entity object with our model
-
-        Returns:
-            Presidio's analysis result
-        """
-        return RecognizerResult(
-            entity_type=entity.type,
-            start=entity.start,
-            end=entity.end,
-            score=entity.score,
-        )

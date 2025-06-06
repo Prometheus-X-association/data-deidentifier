@@ -2,15 +2,7 @@ class DataDeidentifierError(Exception):
     """Base class for all exceptions in data-deidentifier."""
 
 
-class AnalyzeError(DataDeidentifierError):
-    """Base class for all analysis-related exceptions."""
-
-
-class AnalyzationError(AnalyzeError):
-    """Raised when an error occurs during the analysis process."""
-
-
-class EntityTypeValidationError(AnalyzeError):
+class EntityTypeValidationError(DataDeidentifierError):
     """Raised when entity types validation fails."""
 
 

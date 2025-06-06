@@ -4,12 +4,10 @@ from fastapi import Depends, Request
 from logger import LoggerContract
 
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.adapters.presidio.analyzer.analyzer import PresidioAnalyzer
 from src.data_deidentifier.adapters.presidio.anonymizer.anonymizer import (
     PresidioAnonymizer,
 )
 from src.data_deidentifier.adapters.presidio.validator import PresidioValidator
-from src.data_deidentifier.domain.contracts.analyzer import AnalyzerContract
 from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 
@@ -36,22 +34,6 @@ async def get_logger(request: Request) -> LoggerContract:
         The logger instance
     """
     return request.state.logger
-
-
-async def get_analyzer(
-    logger: Annotated[LoggerContract, Depends(get_logger)],
-) -> AnalyzerContract:
-    """Create and return an analyzer instance.
-
-    Args:
-        logger: The logger instance obtained via dependency injection
-
-    Returns:
-        An implementation of the analyzer contract
-    """
-    return PresidioAnalyzer(
-        logger=logger,
-    )
 
 
 async def get_anonymizer(

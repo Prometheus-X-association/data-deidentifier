@@ -1,7 +1,6 @@
 from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
-from src.data_deidentifier.domain.types.entity import Entity
 from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 
@@ -16,57 +15,46 @@ class AnonymizationService:
         self,
         anonymizer: AnonymizerContract,
         validator: EntityTypeValidatorContract,
-        default_operator: AnonymizationOperator,
     ) -> None:
         """Initialize the anonymizer service.
 
         Args:
             anonymizer: Implementation of the anonymizer contract
             validator: Implementation of the validator contract
-            default_operator: Default anonymization operator if not specified
         """
         self.anonymizer = anonymizer
         self.validator = validator
-        self.default_operator = default_operator
 
     def anonymize_text(
         self,
         text: str,
-        entities: list[Entity],
-        operator: AnonymizationOperator | None = None,
+        operator: AnonymizationOperator,
+        language: str,
+        min_score: float,
+        entity_types: list[str],
     ) -> AnonymizationResult:
         """Anonymize PII entities in text.
 
         Args:
             text: The text to anonymize
-            entities: Pre-detected entities
-            operator: Anonymization method to use (defaults to configured default)
+            operator: Anonymization method to use
+            language: Language code of the text
+            min_score: Minimum confidence score
+            entity_types: Entity types to detect
 
         Returns:
             An AnonymizationResult containing the anonymized text and metadata
         """
-        effective_operator = operator or self.default_operator
-
         # Validate data
-        entity_types = [entity.type for entity in entities]
         effective_entity_types = self.validator.validate_entity_types(
             entity_types=entity_types,
         )
 
         # Anonymize the text
-        anonymized_text = self.anonymizer.anonymize_text(
+        return self.anonymizer.anonymize_text(
             text=text,
-            entities=entities,
-            operator=effective_operator,
-        )
-
-        # Build stats
-        entity_stats = {}
-        for entity_type in effective_entity_types:
-            entity_stats[entity_type] = entity_stats.get(entity_type, 0) + 1
-
-        return AnonymizationResult(
-            anonymized_text=anonymized_text,
-            operator=effective_operator,
-            entity_stats=entity_stats,
+            operator=operator,
+            entity_types=effective_entity_types,
+            language=language,
+            min_score=min_score,
         )
