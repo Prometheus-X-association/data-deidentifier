@@ -7,11 +7,11 @@ from src.data_deidentifier.domain.types.anonymization_operator import (
 from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
 
 
-class AnonymizerContract(ABC):
-    """Abstract base class defining the anonymizer interface."""
+class TextAnonymizerContract(ABC):
+    """Abstract base class defining the text anonymizer interface."""
 
     @abstractmethod
-    def anonymize_text(  # noqa: PLR0913
+    def anonymize(  # noqa: PLR0913
         self,
         text: str,
         operator: AnonymizationOperator,

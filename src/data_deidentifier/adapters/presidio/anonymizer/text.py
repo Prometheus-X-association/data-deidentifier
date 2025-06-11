@@ -4,21 +4,23 @@ from logger import LoggerContract
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
-from src.data_deidentifier.adapters.presidio.analyzer.analyzer import PresidioAnalyzer
+from src.data_deidentifier.adapters.presidio.analyzer.text import PresidioTextAnalyzer
 from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
-from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
-from src.data_deidentifier.domain.exceptions import AnonymizationError
+from src.data_deidentifier.domain.contracts.anonymizer.text import (
+    TextAnonymizerContract,
+)
+from src.data_deidentifier.domain.exceptions import TextAnonymizationError
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
 from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
 
 
-class PresidioAnonymizer(AnonymizerContract):
+class PresidioTextAnonymizer(TextAnonymizerContract):
     """Implementation of anonymizer contract using Microsoft Presidio."""
 
     def __init__(self, logger: LoggerContract) -> None:
-        """Initialize the Presidio anonymizer.
+        """Initialize the Presidio text anonymizer.
 
         Args:
             logger: Logger for logging events
@@ -26,12 +28,12 @@ class PresidioAnonymizer(AnonymizerContract):
         self.logger = logger
 
         self.presidio_anonymizer = AnonymizerEngine()
-        self.analyzer = PresidioAnalyzer(logger=self.logger)
+        self.analyzer = PresidioTextAnalyzer(logger=self.logger)
 
         self.logger.debug("Presidio Anonymizer initialized successfully")
 
     @override
-    def anonymize_text(
+    def anonymize(
         self,
         text: str,
         operator: AnonymizationOperator,
@@ -41,7 +43,7 @@ class PresidioAnonymizer(AnonymizerContract):
         operator_params: dict[str, Any] | None = None,
     ) -> AnonymizationResult:
         # Analyze to detect PII entities in text
-        analyzer_results = self.analyzer.analyze_text(
+        analyzer_results = self.analyzer.analyze(
             text=text,
             language=language,
             min_score=min_score,
@@ -76,7 +78,7 @@ class PresidioAnonymizer(AnonymizerContract):
         except Exception as e:
             msg = "Unexpected error during text anonymization"
             self.logger.exception(msg, e, logger_context)
-            raise AnonymizationError(msg) from e
+            raise TextAnonymizationError(msg) from e
 
         self.logger.info("Text anonymization completed successfully", logger_context)
 

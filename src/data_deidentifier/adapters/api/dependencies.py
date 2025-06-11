@@ -4,11 +4,13 @@ from fastapi import Depends, Request
 from logger import LoggerContract
 
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.adapters.presidio.anonymizer.anonymizer import (
-    PresidioAnonymizer,
+from src.data_deidentifier.adapters.presidio.anonymizer.text import (
+    PresidioTextAnonymizer,
 )
 from src.data_deidentifier.adapters.presidio.validator import PresidioValidator
-from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
+from src.data_deidentifier.domain.contracts.anonymizer.text import (
+    TextAnonymizerContract,
+)
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 
 
@@ -36,18 +38,18 @@ async def get_logger(request: Request) -> LoggerContract:
     return request.state.logger
 
 
-async def get_anonymizer(
+async def get_text_anonymizer(
     logger: Annotated[LoggerContract, Depends(get_logger)],
-) -> AnonymizerContract:
-    """Create and return an anonymizer instance.
+) -> TextAnonymizerContract:
+    """Create and return a text anonymizer instance.
 
     Args:
         logger: The logger instance
 
     Returns:
-        An implementation of the anonymizer contract
+        An implementation of the text anonymizer contract
     """
-    return PresidioAnonymizer(
+    return PresidioTextAnonymizer(
         logger=logger,
     )
 

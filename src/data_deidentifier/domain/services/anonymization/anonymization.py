@@ -1,6 +1,8 @@
 from typing import Any
 
-from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
+from src.data_deidentifier.domain.contracts.anonymizer.text import (
+    TextAnonymizerContract,
+)
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
@@ -8,7 +10,7 @@ from src.data_deidentifier.domain.types.anonymization_operator import (
 from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
 
 
-class AnonymizationService:
+class TextAnonymizationService:
     """Service for anonymizing personally identifiable information in text.
 
     This service orchestrates the text anonymization process, manages default values,
@@ -17,19 +19,19 @@ class AnonymizationService:
 
     def __init__(
         self,
-        anonymizer: AnonymizerContract,
+        anonymizer: TextAnonymizerContract,
         validator: EntityTypeValidatorContract,
     ) -> None:
-        """Initialize the anonymizer service.
+        """Initialize the text anonymization service.
 
         Args:
-            anonymizer: Implementation of the anonymizer contract
+            anonymizer: Implementation of the text anonymization contract
             validator: Implementation of the validator contract
         """
         self.anonymizer = anonymizer
         self.validator = validator
 
-    def anonymize_text(  # noqa: PLR0913
+    def anonymize(  # noqa: PLR0913
         self,
         text: str,
         operator: AnonymizationOperator,
@@ -57,7 +59,7 @@ class AnonymizationService:
         )
 
         # Anonymize the text
-        return self.anonymizer.anonymize_text(
+        return self.anonymizer.anonymize(
             text=text,
             operator=operator,
             operator_params=operator_params,

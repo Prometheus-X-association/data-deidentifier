@@ -4,11 +4,11 @@ from presidio_analyzer import AnalyzerEngine, RecognizerResult
 from src.data_deidentifier.adapters.presidio.exceptions import AnalyzeError
 
 
-class PresidioAnalyzer:
+class PresidioTextAnalyzer:
     """Uses the Presidio Analyzer to detect PII entities in text."""
 
     def __init__(self, logger: LoggerContract) -> None:
-        """Initialize the Presidio analyzer.
+        """Initialize the Presidio text analyzer.
 
         Args:
             logger: Logger for logging events
@@ -19,7 +19,7 @@ class PresidioAnalyzer:
 
         self.logger.debug("Presidio Analyzer initialized successfully")
 
-    def analyze_text(
+    def analyze(
         self,
         text: str,
         language: str,
@@ -60,11 +60,7 @@ class PresidioAnalyzer:
             )
         except Exception as e:
             msg = "Unexpected error during entity recognition"
-            self.logger.exception(
-                "Unexpected error during entity recognition",
-                e,
-                logger_context,
-            )
+            self.logger.exception(msg, e, logger_context)
             raise AnalyzeError(msg) from e
 
         self.logger.info(

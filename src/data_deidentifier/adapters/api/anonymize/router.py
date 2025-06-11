@@ -3,14 +3,18 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from src.data_deidentifier.adapters.api.dependencies import (
-    get_anonymizer,
     get_config,
+    get_text_anonymizer,
     get_validator,
 )
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
+from src.data_deidentifier.domain.contracts.anonymizer.text import (
+    TextAnonymizerContract,
+)
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
-from src.data_deidentifier.domain.services.anonymization import AnonymizationService
+from src.data_deidentifier.domain.services.anonymization.anonymization import (
+    TextAnonymizationService,
+)
 
 from .schemas import (
     AnonymizeTextRequest,
@@ -28,7 +32,7 @@ router = APIRouter(prefix="/anonymize")
 )
 async def anonymize_text(
     query: AnonymizeTextRequest,
-    anonymizer: Annotated[AnonymizerContract, Depends(get_anonymizer)],
+    anonymizer: Annotated[TextAnonymizerContract, Depends(get_text_anonymizer)],
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     config: Annotated[ConfigContract, Depends(get_config)],
 ) -> AnonymizeTextResponse:
@@ -52,12 +56,12 @@ async def anonymize_text(
     )
     effective_entity_types = query.entity_types or config.get_default_entity_types()
 
-    anonymize_service = AnonymizationService(
+    anonymize_service = TextAnonymizationService(
         anonymizer=anonymizer,
         validator=validator,
     )
 
-    result = anonymize_service.anonymize_text(
+    result = anonymize_service.anonymize(
         text=query.text,
         operator=effective_operator,
         operator_params=query.operator_params,
