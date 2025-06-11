@@ -25,17 +25,17 @@ catalogue==2.0.10
     # via spacy
     # via srsly
     # via thinc
-certifi==2025.1.31
+certifi==2025.4.26
     # via requests
 cffi==1.17.1
     # via cryptography
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via requests
-click==8.1.8
+click==8.2.1
     # via mkdocs
     # via typer
     # via uvicorn
-cloudpathlib==0.21.0
+cloudpathlib==0.21.1
     # via weasel
 colorama==0.4.6
     # via griffe
@@ -45,7 +45,7 @@ confection==0.1.5
     # via weasel
 configcore @ git+https://github.com/inokufu/python-config@e6eeb19555233edcc069fb47b4566c6556488c37
     # via data-deidentifier
-cryptography==44.0.2
+cryptography==44.0.3
     # via presidio-anonymizer
 cymem==2.0.11
     # via preshed
@@ -57,7 +57,7 @@ filelock==3.18.0
     # via tldextract
 ghp-import==2.1.0
     # via mkdocs
-griffe==1.7.2
+griffe==1.7.3
     # via griffe-inherited-docstrings
     # via mkdocstrings-python
 griffe-inherited-docstrings==1.1.1
@@ -66,7 +66,7 @@ griffe-inherited-docstrings==1.1.1
     # via logger
 gunicorn==23.0.0
     # via data-deidentifier
-h11==0.14.0
+h11==0.16.0
     # via uvicorn
 httptools==0.6.4
     # via uvicorn
@@ -89,7 +89,7 @@ loguru==0.7.3
     # via logger
 marisa-trie==1.2.1
     # via language-data
-markdown==3.7
+markdown==3.8
     # via mkdocs
     # via mkdocs-autorefs
     # via mkdocs-material
@@ -114,12 +114,12 @@ mkdocs==1.6.1
     # via mkdocs-autorefs
     # via mkdocs-material
     # via mkdocstrings
-mkdocs-autorefs==1.4.1
+mkdocs-autorefs==1.4.2
     # via mkdocstrings
     # via mkdocstrings-python
 mkdocs-get-deps==0.2.0
     # via mkdocs
-mkdocs-material==9.6.11
+mkdocs-material==9.6.14
     # via configcore
     # via data-deidentifier
     # via logger
@@ -127,19 +127,19 @@ mkdocs-material-extensions==1.3.1
     # via mkdocs-material
 mkdocstrings==0.29.1
     # via mkdocstrings-python
-mkdocstrings-python==1.16.10
+mkdocstrings-python==1.16.12
     # via configcore
     # via data-deidentifier
     # via logger
-murmurhash==1.0.12
+murmurhash==1.0.13
     # via preshed
     # via spacy
     # via thinc
-numpy==2.2.4
+numpy==2.3.0
     # via blis
     # via spacy
     # via thinc
-packaging==24.2
+packaging==25.0
     # via gunicorn
     # via mkdocs
     # via spacy
@@ -151,11 +151,11 @@ pathspec==0.12.1
     # via mkdocs
 phonenumbers==8.13.55
     # via presidio-analyzer
-pip==25.0.1
+pip==25.1.1
     # via data-deidentifier
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via mkdocs-get-deps
-preshed==3.0.9
+preshed==3.0.10
     # via spacy
     # via thinc
 presidio-analyzer==2.2.358
@@ -164,21 +164,21 @@ presidio-anonymizer==2.2.358
     # via data-deidentifier
 pycparser==2.22
     # via cffi
-pydantic==2.11.2
+pydantic==2.11.5
     # via confection
     # via fastapi
     # via pydantic-settings
     # via spacy
     # via thinc
     # via weasel
-pydantic-core==2.33.1
+pydantic-core==2.33.2
     # via pydantic
 pydantic-settings==2.8.1
     # via configcore
 pygments==2.19.1
     # via mkdocs-material
     # via rich
-pymdown-extensions==10.14.3
+pymdown-extensions==10.15
     # via mkdocs-material
     # via mkdocstrings
 python-dateutil==2.9.0.post0
@@ -193,11 +193,11 @@ pyyaml==6.0.2
     # via pymdown-extensions
     # via pyyaml-env-tag
     # via uvicorn
-pyyaml-env-tag==0.1
+pyyaml-env-tag==1.1
     # via mkdocs
 regex==2024.11.6
     # via presidio-analyzer
-requests==2.32.3
+requests==2.32.4
     # via mkdocs-material
     # via requests-file
     # via spacy
@@ -207,7 +207,7 @@ requests-file==2.1.0
     # via tldextract
 rich==14.0.0
     # via typer
-setuptools==78.1.0
+setuptools==80.9.0
     # via marisa-trie
     # via spacy
     # via thinc
@@ -219,7 +219,7 @@ smart-open==7.1.0
     # via weasel
 sniffio==1.3.1
     # via anyio
-spacy==3.8.5
+spacy==3.8.7
     # via data-deidentifier
     # via presidio-analyzer
 spacy-legacy==3.0.12
@@ -231,29 +231,28 @@ srsly==2.5.1
     # via spacy
     # via thinc
     # via weasel
-starlette==0.46.1
+starlette==0.46.2
     # via fastapi
 thinc==8.3.6
     # via spacy
-tldextract==5.1.3
+tldextract==5.3.0
     # via presidio-analyzer
 tqdm==4.67.1
     # via spacy
-typer==0.15.2
+typer==0.16.0
     # via spacy
     # via weasel
-typing-extensions==4.13.1
-    # via anyio
+typing-extensions==4.14.0
     # via fastapi
     # via pydantic
     # via pydantic-core
     # via typer
     # via typing-inspection
-typing-inspection==0.4.0
+typing-inspection==0.4.1
     # via pydantic
-urllib3==2.3.0
+urllib3==2.4.0
     # via requests
-uvicorn==0.34.0
+uvicorn==0.34.3
     # via data-deidentifier
 uvloop==0.21.0
     # via uvicorn
@@ -263,7 +262,7 @@ wasabi==1.1.3
     # via weasel
 watchdog==6.0.0
     # via mkdocs
-watchfiles==1.0.4
+watchfiles==1.0.5
     # via uvicorn
 weasel==0.4.1
     # via spacy
