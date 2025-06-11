@@ -22,6 +22,11 @@ class AnonymizeTextRequest(BaseModel):
         description="Anonymization method",
     )
 
+    operator_params: dict[str, Any] | None = Field(
+        default=None,
+        description="Anonymization operator parameters",
+    )
+
     language: SupportedLanguage | None = Field(
         default=None,
         description="Language code of the text (e.g., 'en', 'fr', 'es')",

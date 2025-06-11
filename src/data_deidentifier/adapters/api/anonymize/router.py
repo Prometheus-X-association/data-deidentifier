@@ -60,6 +60,7 @@ async def anonymize_text(
     result = anonymize_service.anonymize_text(
         text=query.text,
         operator=effective_operator,
+        operator_params=query.operator_params,
         language=effective_language,
         min_score=effective_min_score,
         entity_types=effective_entity_types,

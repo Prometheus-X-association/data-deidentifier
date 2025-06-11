@@ -1,3 +1,5 @@
+from typing import Any
+
 from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 from src.data_deidentifier.domain.types.anonymization_operator import (
@@ -27,13 +29,14 @@ class AnonymizationService:
         self.anonymizer = anonymizer
         self.validator = validator
 
-    def anonymize_text(
+    def anonymize_text(  # noqa: PLR0913
         self,
         text: str,
         operator: AnonymizationOperator,
         language: str,
         min_score: float,
         entity_types: list[str],
+        operator_params: dict[str, Any] | None = None,
     ) -> AnonymizationResult:
         """Anonymize PII entities in text.
 
@@ -43,6 +46,7 @@ class AnonymizationService:
             language: Language code of the text
             min_score: Minimum confidence score
             entity_types: Entity types to detect
+            operator_params: Optional parameters for the operator
 
         Returns:
             An AnonymizationResult containing the anonymized text and metadata
@@ -56,6 +60,7 @@ class AnonymizationService:
         return self.anonymizer.anonymize_text(
             text=text,
             operator=operator,
+            operator_params=operator_params,
             entity_types=effective_entity_types,
             language=language,
             min_score=min_score,

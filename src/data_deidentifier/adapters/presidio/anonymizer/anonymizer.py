@@ -1,4 +1,4 @@
-from typing import override
+from typing import Any, override
 
 from logger import LoggerContract
 from presidio_anonymizer import AnonymizerEngine
@@ -38,6 +38,7 @@ class PresidioAnonymizer(AnonymizerContract):
         language: str,
         min_score: float,
         entity_types: list[str] | None = None,
+        operator_params: dict[str, Any] | None = None,
     ) -> AnonymizationResult:
         # Analyze to detect PII entities in text
         analyzer_results = self.analyzer.analyze_text(
@@ -62,7 +63,7 @@ class PresidioAnonymizer(AnonymizerContract):
 
         # Prepare operator config
         entity_types = {entity.entity_type for entity in analyzer_results}
-        operator_config = OperatorConfig(operator_name=operator)
+        operator_config = OperatorConfig(operator_name=operator, params=operator_params)
         operators = {entity_type: operator_config for entity_type in entity_types}
 
         try:

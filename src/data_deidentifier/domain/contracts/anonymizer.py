@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
@@ -10,13 +11,14 @@ class AnonymizerContract(ABC):
     """Abstract base class defining the anonymizer interface."""
 
     @abstractmethod
-    def anonymize_text(
+    def anonymize_text(  # noqa: PLR0913
         self,
         text: str,
         operator: AnonymizationOperator,
         language: str,
         min_score: float,
         entity_types: list[str] | None = None,
+        operator_params: dict[str, Any] | None = None,
     ) -> AnonymizationResult:
         """Anonymize PII entities in text.
 
@@ -26,6 +28,7 @@ class AnonymizerContract(ABC):
             language: Language code of the text
             min_score: Minimum confidence score threshold
             entity_types: Types of entities to detect (None means all supported types)
+            operator_params: Optional parameters for the operator
 
         Returns:
             An AnonymizationResult containing the anonymized text and metadata
