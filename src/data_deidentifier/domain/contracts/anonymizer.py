@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
+from src.data_deidentifier.domain.types.anonymization_operator import (
+    AnonymizationOperator,
+)
 from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
-from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 
 class AnonymizerContract(ABC):

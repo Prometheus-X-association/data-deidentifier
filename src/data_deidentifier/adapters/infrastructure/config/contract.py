@@ -2,7 +2,9 @@ from abc import abstractmethod
 
 from configcore import ConfigContract as CoreConfigContract
 
-from src.data_deidentifier.domain.types.operators import AnonymizationOperator
+from src.data_deidentifier.domain.types.anonymization_operator import (
+    AnonymizationOperator,
+)
 
 
 class ConfigContract(CoreConfigContract):

@@ -2,8 +2,11 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from src.data_deidentifier.domain.types.anonymization_operator import (
+    AnonymizationOperator,
+)
 from src.data_deidentifier.domain.types.entity import Entity
-from src.data_deidentifier.domain.types.operators import AnonymizationOperator
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 
 
 class AnonymizeTextRequest(BaseModel):
@@ -19,7 +22,7 @@ class AnonymizeTextRequest(BaseModel):
         description="Anonymization method",
     )
 
-    language: str | None = Field(
+    language: SupportedLanguage | None = Field(
         default=None,
         description="Language code of the text (e.g., 'en', 'fr', 'es')",
     )

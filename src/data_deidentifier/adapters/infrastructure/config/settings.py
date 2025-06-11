@@ -3,7 +3,9 @@ from typing import Annotated, override
 from configcore import Settings as CoreSettings
 from pydantic import BeforeValidator, Field
 
-from src.data_deidentifier.domain.types.operators import AnonymizationOperator
+from src.data_deidentifier.domain.types.anonymization_operator import (
+    AnonymizationOperator,
+)
 
 from .contract import ConfigContract
 

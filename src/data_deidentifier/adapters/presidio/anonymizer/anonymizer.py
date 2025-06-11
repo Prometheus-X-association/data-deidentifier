@@ -8,8 +8,10 @@ from src.data_deidentifier.adapters.presidio.analyzer.analyzer import PresidioAn
 from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
 from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
 from src.data_deidentifier.domain.exceptions import AnonymizationError
+from src.data_deidentifier.domain.types.anonymization_operator import (
+    AnonymizationOperator,
+)
 from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
-from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 
 class PresidioAnonymizer(AnonymizerContract):

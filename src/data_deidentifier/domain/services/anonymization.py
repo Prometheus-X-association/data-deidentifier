@@ -1,7 +1,9 @@
 from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
+from src.data_deidentifier.domain.types.anonymization_operator import (
+    AnonymizationOperator,
+)
 from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
-from src.data_deidentifier.domain.types.operators import AnonymizationOperator
 
 
 class AnonymizationService:
