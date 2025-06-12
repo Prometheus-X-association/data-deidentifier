@@ -2,11 +2,11 @@ from typing import Any, override
 
 from logger import LoggerContract
 from presidio_anonymizer.entities import OperatorConfig
-from presidio_structured import StructuredEngine
 
 from src.data_deidentifier.adapters.presidio.analyzer.structured import (
     PresidioStructuredDataAnalyzer,
 )
+from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactory
 from src.data_deidentifier.adapters.presidio.exceptions import (
     StructuredDataAnalysisError,
 )
@@ -78,7 +78,9 @@ class PresidioStructuredDataAnonymizer(StructuredDataAnonymizerContract):
         operators = {entity_type: operator_config for entity_type in entity_types}
 
         # Get the appropriate data processor for this data type
-        engine = StructuredEngine(data_processor=data_processor)
+        engine = PresidioEngineFactory.get_structured_data_anonymizer_engine(
+            processor=data_processor,
+        )
 
         try:
             # Anonymize the structured data

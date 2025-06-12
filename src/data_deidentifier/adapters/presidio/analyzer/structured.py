@@ -2,9 +2,7 @@ from logger import LoggerContract
 from presidio_structured import StructuredAnalysis
 from presidio_structured.data.data_processors import DataProcessorBase
 
-from src.data_deidentifier.adapters.presidio.analyzer.structured_types.factory import (
-    StructuredDataAnalyzerFactory,
-)
+from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactory
 from src.data_deidentifier.adapters.presidio.exceptions import (
     StructuredDataAnalysisError,
 )
@@ -25,7 +23,11 @@ class PresidioStructuredDataAnalyzer:
         """
         self.logger = logger
 
-        self.analyzer_factory = StructuredDataAnalyzerFactory(logger=logger)
+        self.analyzer_factory = (
+            PresidioEngineFactory.get_structured_data_analyzer_factory(
+                logger=logger,
+            )
+        )
 
         self.logger.debug("Presidio Structured Analyzer initialized successfully")
 

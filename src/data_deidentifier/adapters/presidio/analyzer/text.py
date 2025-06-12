@@ -1,6 +1,7 @@
 from logger import LoggerContract
-from presidio_analyzer import AnalyzerEngine, RecognizerResult
+from presidio_analyzer import RecognizerResult
 
+from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactory
 from src.data_deidentifier.adapters.presidio.exceptions import TextAnalysisError
 
 
@@ -15,7 +16,7 @@ class PresidioTextAnalyzer:
         """
         self.logger = logger
 
-        self.presidio_analyzer = AnalyzerEngine()
+        self.presidio_analyzer = PresidioEngineFactory.get_text_analyzer_engine()
 
         self.logger.debug("Presidio Analyzer initialized successfully")
 

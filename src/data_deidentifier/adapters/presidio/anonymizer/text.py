@@ -1,10 +1,10 @@
 from typing import Any, override
 
 from logger import LoggerContract
-from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
 from src.data_deidentifier.adapters.presidio.analyzer.text import PresidioTextAnalyzer
+from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactory
 from src.data_deidentifier.adapters.presidio.exceptions import TextAnalysisError
 from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
 from src.data_deidentifier.domain.contracts.anonymizer.text import (
@@ -30,7 +30,7 @@ class PresidioTextAnonymizer(TextAnonymizerContract):
         """
         self.logger = logger
 
-        self.presidio_anonymizer = AnonymizerEngine()
+        self.presidio_anonymizer = PresidioEngineFactory.get_text_anonymizer_engine()
         self.analyzer = PresidioTextAnalyzer(logger=self.logger)
 
         self.logger.debug("Presidio Anonymizer initialized successfully")
