@@ -42,7 +42,7 @@ class PresidioValidator(EntityTypeValidatorContract):
             List of validated and normalized entity types
 
         Raises:
-            ValueError: If any entity type is not supported
+            EntityTypeValidationError: If any entity type is not supported
         """
         if not entity_types:
             return []

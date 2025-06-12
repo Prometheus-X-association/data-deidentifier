@@ -1,17 +1,21 @@
 from typing import Any
 
-from src.data_deidentifier.domain.contracts.anonymizer.text import (
-    TextAnonymizerContract,
+from src.data_deidentifier.domain.contracts.anonymizer.structured import (
+    StructuredDataAnonymizerContract,
 )
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
+from src.data_deidentifier.domain.exceptions import InvalidInputDataError
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
-from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
+from src.data_deidentifier.domain.types.structured_anonymization_result import (
+    StructuredDataAnonymizationResult,
+)
+from src.data_deidentifier.domain.types.structured_data import StructuredData
 
 
-class TextAnonymizationService:
-    """Service for anonymizing personally identifiable information in text.
+class StructuredDataAnonymizationService:
+    """Service for anonymizing personally identifiable information in structured data.
 
     This service orchestrates the text anonymization process, manages default values,
     and produces structured anonymization results.
@@ -19,51 +23,51 @@ class TextAnonymizationService:
 
     def __init__(
         self,
-        anonymizer: TextAnonymizerContract,
+        anonymizer: StructuredDataAnonymizerContract,
         validator: EntityTypeValidatorContract,
     ) -> None:
-        """Initialize the text anonymization service.
+        """Initialize the structured data anonymization service.
 
         Args:
-            anonymizer: Implementation of the text anonymization contract
+            anonymizer: Implementation of the structured data anonymization contract
             validator: Implementation of the validator contract
         """
         self.anonymizer = anonymizer
         self.validator = validator
 
-    def anonymize(  # noqa: PLR0913
+    def anonymize(
         self,
-        text: str,
+        data: StructuredData,
         operator: AnonymizationOperator,
         language: str,
-        min_score: float,
         entity_types: list[str],
         operator_params: dict[str, Any] | None = None,
-    ) -> AnonymizationResult:
-        """Anonymize PII entities in text.
+    ) -> StructuredDataAnonymizationResult:
+        """Anonymize PII entities in structured data.
 
         Args:
-            text: The text to anonymize
+            data: The structured data to anonymize
             operator: Anonymization method to use
             language: Language code of the text
-            min_score: Minimum confidence score
             entity_types: Entity types to detect
             operator_params: Optional parameters for the operator
 
         Returns:
-            An AnonymizationResult containing the anonymized text and metadata
+            A StructuredDataAnonymizationResult containing anonymized data and metadata
         """
+        if not data:
+            raise InvalidInputDataError("Data cannot be empty")
+
         # Validate data
         effective_entity_types = self.validator.validate_entity_types(
             entity_types=entity_types,
         )
 
-        # Anonymize the text
+        # Anonymize the data
         return self.anonymizer.anonymize(
-            text=text,
+            data=data,
             operator=operator,
             operator_params=operator_params,
             entity_types=effective_entity_types,
             language=language,
-            min_score=min_score,
         )

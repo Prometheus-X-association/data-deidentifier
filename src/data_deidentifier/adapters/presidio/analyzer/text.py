@@ -1,7 +1,7 @@
 from logger import LoggerContract
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
 
-from src.data_deidentifier.adapters.presidio.exceptions import AnalyzeError
+from src.data_deidentifier.adapters.presidio.exceptions import TextAnalysisError
 
 
 class PresidioTextAnalyzer:
@@ -38,7 +38,7 @@ class PresidioTextAnalyzer:
             List of detected entities
 
         Raises:
-            AnalyzeError: If analysis fails
+            TextAnalysisError: If analysis fails
         """
         language = language.lower()
 
@@ -61,7 +61,7 @@ class PresidioTextAnalyzer:
         except Exception as e:
             msg = "Unexpected error during entity recognition"
             self.logger.exception(msg, e, logger_context)
-            raise AnalyzeError(msg) from e
+            raise TextAnalysisError(msg) from e
 
         self.logger.info(
             "Analysis completed successfully",

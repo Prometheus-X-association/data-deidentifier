@@ -5,6 +5,7 @@ from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
 from src.data_deidentifier.adapters.presidio.analyzer.text import PresidioTextAnalyzer
+from src.data_deidentifier.adapters.presidio.exceptions import TextAnalysisError
 from src.data_deidentifier.adapters.presidio.mapper import PresidioEntityMapper
 from src.data_deidentifier.domain.contracts.anonymizer.text import (
     TextAnonymizerContract,
@@ -13,7 +14,9 @@ from src.data_deidentifier.domain.exceptions import TextAnonymizationError
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
-from src.data_deidentifier.domain.types.anonymization_result import AnonymizationResult
+from src.data_deidentifier.domain.types.text_anonymization_result import (
+    TextAnonymizationResult,
+)
 
 
 class PresidioTextAnonymizer(TextAnonymizerContract):
@@ -41,17 +44,20 @@ class PresidioTextAnonymizer(TextAnonymizerContract):
         min_score: float,
         entity_types: list[str] | None = None,
         operator_params: dict[str, Any] | None = None,
-    ) -> AnonymizationResult:
+    ) -> TextAnonymizationResult:
         # Analyze to detect PII entities in text
-        analyzer_results = self.analyzer.analyze(
-            text=text,
-            language=language,
-            min_score=min_score,
-            entity_types=entity_types,
-        )
+        try:
+            analyzer_results = self.analyzer.analyze(
+                text=text,
+                language=language,
+                min_score=min_score,
+                entity_types=entity_types,
+            )
+        except TextAnalysisError as e:
+            raise TextAnonymizationError("Anonymization failed during analysis") from e
 
         if not text or not analyzer_results:
-            return AnonymizationResult(
+            return TextAnonymizationResult(
                 anonymized_text=text,
                 detected_entities=[],
             )
@@ -84,14 +90,14 @@ class PresidioTextAnonymizer(TextAnonymizerContract):
 
         # Convert results to our format
         entities = [
-            PresidioEntityMapper.presidio_result_to_entity(
+            PresidioEntityMapper.presidio_result_to_domain(
                 result=result,
                 text=text,
             )
             for result in analyzer_results
         ]
 
-        return AnonymizationResult(
+        return TextAnonymizationResult(
             anonymized_text=presidio_results.text,
             detected_entities=entities,
         )
