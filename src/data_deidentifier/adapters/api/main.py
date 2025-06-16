@@ -9,6 +9,7 @@ from src.data_deidentifier.adapters.infrastructure.config.settings import Settin
 
 from .anonymize.router import router as anonymize_router
 from .exception_handler import ExceptionHandler
+from .pseudonymize.router import router as pseudonymize_router
 
 config = Settings()
 
@@ -48,3 +49,4 @@ exception_handler = ExceptionHandler()
 exception_handler.configure(app=app)
 
 app.include_router(router=anonymize_router)
+app.include_router(router=pseudonymize_router)
