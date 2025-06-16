@@ -1,3 +1,4 @@
+import threading
 from typing import ClassVar
 
 from logger import LoggerContract
@@ -12,13 +13,13 @@ from src.data_deidentifier.adapters.presidio.analyzer.structured_types.factory i
 
 
 class PresidioEngineFactory:
-    """Factory and cache manager for Presidio analysis and anonymization engines.
+    """Thread-safe factory and cache manager for Presidio engines.
 
     Provides a centralized way to lazily instantiate and reuse Presidio engines
-    across multiple requests, avoids creating new engine instances for each request by
-    maintaining shared singletons or cached instances based on processor type.
+    across multiple requests, with thread safety and optional cache management.
 
     Attributes:
+        _lock: Thread lock for safe singleton creation.
         _text_analyzer_engine: Cached instance of the text analyzer engine.
         _text_anonymizer_engine: Cached instance of the text anonymizer engine.
         _structured_data_factory: Cached factory for structured data analyzers.
@@ -26,14 +27,15 @@ class PresidioEngineFactory:
          keyed by processor name.
     """
 
-    _text_analyzer_engine: AnalyzerEngine | None = None
-    _text_anonymizer_engine: AnonymizerEngine | None = None
-    _structured_data_factory: StructuredDataAnalyzerFactory | None = None
-    _structured_data_engines: ClassVar[dict] = {}
+    _lock: ClassVar[threading.Lock] = threading.Lock()
+    _text_analyzer_engine: ClassVar[AnalyzerEngine | None] = None
+    _text_anonymizer_engine: ClassVar[AnonymizerEngine | None] = None
+    _structured_data_factory: ClassVar[StructuredDataAnalyzerFactory | None] = None
+    _structured_data_engines: ClassVar[dict[str, StructuredEngine]] = {}
 
     @classmethod
     def get_text_analyzer_engine(cls) -> AnalyzerEngine:
-        """Get a shared instance of the text analyzer engine.
+        """Get a shared instance of the text analyzer engine (thread-safe).
 
         Lazily initializes the `AnalyzerEngine` if not already created
         and returns the same instance for subsequent calls.
@@ -42,12 +44,14 @@ class PresidioEngineFactory:
             AnalyzerEngine: The shared text analyzer engine.
         """
         if cls._text_analyzer_engine is None:
-            cls._text_analyzer_engine = AnalyzerEngine()
+            with cls._lock:
+                if cls._text_analyzer_engine is None:
+                    cls._text_analyzer_engine = AnalyzerEngine()
         return cls._text_analyzer_engine
 
     @classmethod
     def get_text_anonymizer_engine(cls) -> AnonymizerEngine:
-        """Get a shared instance of the text anonymizer engine.
+        """Get a shared instance of the text anonymizer engine (thread-safe).
 
         Lazily initializes the `AnonymizerEngine` if not already created
         and returns the same instance for subsequent calls.
@@ -56,7 +60,9 @@ class PresidioEngineFactory:
             AnonymizerEngine: The shared text anonymizer engine.
         """
         if cls._text_anonymizer_engine is None:
-            cls._text_anonymizer_engine = AnonymizerEngine()
+            with cls._lock:
+                if cls._text_anonymizer_engine is None:
+                    cls._text_anonymizer_engine = AnonymizerEngine()
         return cls._text_anonymizer_engine
 
     @classmethod
@@ -64,7 +70,7 @@ class PresidioEngineFactory:
         cls,
         logger: LoggerContract,
     ) -> StructuredDataAnalyzerFactory:
-        """Get a shared instance of the structured data analyzer factory.
+        """Get a shared instance of the structured data analyzer factory (thread-safe).
 
         Lazily initializes the `StructuredDataAnalyzerFactory` if not already created
         and returns the same instance for future calls.
@@ -76,7 +82,9 @@ class PresidioEngineFactory:
             StructuredDataAnalyzerFactory: The shared factory for data analyzers.
         """
         if cls._structured_data_factory is None:
-            cls._structured_data_factory = StructuredDataAnalyzerFactory(logger)
+            with cls._lock:
+                if cls._structured_data_factory is None:
+                    cls._structured_data_factory = StructuredDataAnalyzerFactory(logger)
         return cls._structured_data_factory
 
     @classmethod
@@ -87,8 +95,8 @@ class PresidioEngineFactory:
         """Get a cached structured data anonymizer engine for a given data processor.
 
         Returns a StructuredEngine instance based on the processor's type.
-        If an engine the given processor type does not exist in the cache,
-        it is created and stored for future reuse.
+        If an engine for the given processor type does not exist in the cache,
+        it is created and stored for future reuse (thread-safe).
 
         Args:
             processor: The data processor used to configure the anonymizer engine.
@@ -97,8 +105,12 @@ class PresidioEngineFactory:
             StructuredEngine: A structured anonymizer engine for the given processor.
         """
         key = type(processor).__name__
+
         if key not in cls._structured_data_engines:
-            cls._structured_data_engines[key] = StructuredEngine(
-                data_processor=processor,
-            )
+            with cls._lock:
+                if key not in cls._structured_data_engines:
+                    cls._structured_data_engines[key] = StructuredEngine(
+                        data_processor=processor,
+                    )
+
         return cls._structured_data_engines[key]

@@ -62,7 +62,7 @@ class AnonymizeTextResponse(BaseModel):
 
     meta: dict[str, Any] | None = Field(
         default_factory=dict,
-        description="Statistics about anonymized entity types",
+        description="Statistics about the anonymization operation",
     )
 
 
@@ -87,7 +87,7 @@ class AnonymizeStructuredDataRequest(BaseModel):
 
     language: SupportedLanguage | None = Field(
         default=None,
-        description="Language code of the text (e.g., 'en', 'fr', 'es')",
+        description="Language code of the data (e.g., 'en', 'fr', 'es')",
     )
 
     entity_types: list[str] | None = Field(

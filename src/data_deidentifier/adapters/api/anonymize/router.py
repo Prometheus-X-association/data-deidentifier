@@ -49,7 +49,7 @@ async def anonymize_text(
 
     Args:
         query: The request containing text to anonymize
-        anonymizer: The anonymizer implementation
+        anonymizer: The text anonymizer implementation
         validator: The validator implementation
         config: The application configuration
 
