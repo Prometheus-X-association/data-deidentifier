@@ -8,6 +8,8 @@ from src.data_deidentifier.domain.types.pseudonymization_method import (
     PseudonymizationMethod,
 )
 
+from .random_number import RandomNumberPseudonymizationMethod
+
 
 class PseudonymizationMethodFactory:
     """Factory for creating pseudonymization method instances."""
@@ -15,7 +17,9 @@ class PseudonymizationMethodFactory:
     # Mapping between method enums and implementation classes
     _METHOD_MAPPING: ClassVar[
         dict[PseudonymizationMethod, type[PseudonymizationMethodContract]]
-    ] = {}
+    ] = {
+        PseudonymizationMethod.RANDOM_NUMBER: RandomNumberPseudonymizationMethod,
+    }
 
     @classmethod
     def create(

@@ -1,5 +1,7 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 
 
 class PseudonymizationMethod(StrEnum):
     """Enumeration for pseudonymization methods."""
+
+    RANDOM_NUMBER = auto()
