@@ -18,7 +18,7 @@ from src.data_deidentifier.domain.types.text_anonymization_result import (
 class TextAnonymizationService:
     """Service for anonymizing personally identifiable information in text.
 
-    This service orchestrates the text anonymization process, manages default values,
+    This service orchestrates the text anonymization process
     and produces structured anonymization results.
     """
 

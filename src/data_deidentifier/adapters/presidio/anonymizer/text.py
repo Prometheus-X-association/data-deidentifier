@@ -69,17 +69,17 @@ class PresidioTextAnonymizer(TextAnonymizerContract):
         }
         self.logger.debug("Starting text anonymization", logger_context)
 
-        # Prepare operator config
-        entity_types = {entity.entity_type for entity in analyzer_results}
-        operator_config = OperatorConfig(operator_name=operator, params=operator_params)
-        operators = {entity_type: operator_config for entity_type in entity_types}
-
         try:
             # Anonymize the text
             presidio_results = self.presidio_anonymizer.anonymize(
                 text=text,
                 analyzer_results=analyzer_results,
-                operators=operators,
+                operators={
+                    "DEFAULT": OperatorConfig(
+                        operator_name=operator,
+                        params=operator_params,
+                    ),
+                },
             )
         except Exception as e:
             msg = "Unexpected error during text anonymization"
