@@ -17,7 +17,7 @@ from src.data_deidentifier.domain.types.structured_data import StructuredData
 class StructuredDataAnonymizationService:
     """Service for anonymizing personally identifiable information in structured data.
 
-    This service orchestrates the text anonymization process, manages default values,
+    This service orchestrates the text anonymization process
     and produces structured anonymization results.
     """
 

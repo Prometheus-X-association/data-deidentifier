@@ -25,7 +25,7 @@ class PresidioStructuredDataAnalyzer:
 
         self.analyzer_factory = (
             PresidioEngineFactory.get_structured_data_analyzer_factory(
-                logger=logger,
+                logger=self.logger,
             )
         )
 
