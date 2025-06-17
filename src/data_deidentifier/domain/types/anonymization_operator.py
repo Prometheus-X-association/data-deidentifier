@@ -9,3 +9,4 @@ class AnonymizationOperator(StrEnum):
     MASK = auto()
     HASH = auto()
     ENCRYPT = auto()
+    PSEUDONYMIZE = auto()

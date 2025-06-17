@@ -7,8 +7,11 @@ from presidio_anonymizer import AnonymizerEngine
 from presidio_structured import StructuredEngine
 from presidio_structured.data.data_processors import DataProcessorBase
 
-from src.data_deidentifier.adapters.presidio.analyzer.structured_types.factory import (
+from .analyzer.structured_types.factory import (
     StructuredDataAnalyzerFactory,
+)
+from .pseudonymizer.custom_operator import (
+    PseudonymizeOperator,
 )
 
 
@@ -63,6 +66,7 @@ class PresidioEngineFactory:
             with cls._lock:
                 if cls._text_anonymizer_engine is None:
                     cls._text_anonymizer_engine = AnonymizerEngine()
+                    cls._text_anonymizer_engine.add_anonymizer(PseudonymizeOperator)
         return cls._text_anonymizer_engine
 
     @classmethod
