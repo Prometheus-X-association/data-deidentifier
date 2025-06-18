@@ -1,5 +1,7 @@
 from typing import Any, ClassVar
 
+from logger import LoggerContract
+
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -27,13 +29,15 @@ class PseudonymizationMethodFactory:
     def create(
         cls,
         method: PseudonymizationMethod,
-        params: dict[str, Any] | None = None,
+        method_params: dict[str, Any],
+        logger: LoggerContract,
     ) -> PseudonymizationMethodContract:
         """Create a pseudonymization method instance.
 
         Args:
             method: The pseudonymization method enum
-            params: Parameters for the method
+            method_params: Parameters for the pseudonymization method
+            logger: Logger for logging events
 
         Returns:
             A method instance implementing PseudonymizationMethodContract
@@ -48,7 +52,7 @@ class PseudonymizationMethodFactory:
             )
 
         method_class = cls._METHOD_MAPPING[method]
-        return method_class(params=params)
+        return method_class(params=method_params, logger=logger)
 
     @classmethod
     def get_supported_methods(cls) -> list[PseudonymizationMethod]:

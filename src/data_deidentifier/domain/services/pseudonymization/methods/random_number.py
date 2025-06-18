@@ -1,6 +1,8 @@
 import secrets
 from typing import Any, override
 
+from logger import LoggerContract
+
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -12,13 +14,14 @@ class RandomNumberPseudonymizationMethod(PseudonymizationMethodContract):
 
     RANDOM_BITS_NUMBER = 24
 
-    def __init__(self, params: dict[str, Any] | None = None) -> None:
+    def __init__(self, params: dict[str, Any], logger: LoggerContract) -> None:
         """Initialize the random number method.
 
         Args:
-            params: Method parameters (seed, format, etc.)
+            params: Method parameters
+            logger: Logger for logging events
         """
-        super().__init__(params=params)
+        super().__init__(params=params, logger=logger)
 
         # Cache by entity type and text
         self._mapping: dict[str, dict[str, str]] = {}
@@ -26,9 +29,9 @@ class RandomNumberPseudonymizationMethod(PseudonymizationMethodContract):
     @override
     def generate_pseudonym(self, entity: Entity) -> str:
         cache_key = entity.text
+        entity_type = entity.type
 
         # Mapping by entity type
-        entity_type = entity.type
         if entity_type not in self._mapping:
             self._mapping[entity_type] = {}
 
@@ -43,6 +46,6 @@ class RandomNumberPseudonymizationMethod(PseudonymizationMethodContract):
         # Format the pseudonym
         pseudonym = f"<{entity_type}_{random_number}>"
 
-        # Store for consistency
+        # Store in cache
         self._mapping[entity_type][cache_key] = pseudonym
         return pseudonym

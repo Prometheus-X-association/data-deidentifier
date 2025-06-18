@@ -60,10 +60,16 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
         self.logger.debug("Starting text pseudonymization", logger_context)
 
         # Get the pseudonymization method
-        pseudonymization_method = PseudonymizationMethodFactory.create(
-            method=method,
-            params=method_params,
-        )
+        try:
+            pseudonymization_method = PseudonymizationMethodFactory.create(
+                method=method,
+                method_params=method_params or {},
+                logger=self.logger,
+            )
+        except Exception as e:
+            raise TextPseudonymizationError(
+                "Pseudonymization method loading failed",
+            ) from e
 
         # Delegate to anonymizer with our custom operator
         try:

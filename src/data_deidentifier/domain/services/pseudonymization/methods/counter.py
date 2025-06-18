@@ -1,6 +1,8 @@
 import threading
 from typing import Any, override
 
+from logger import LoggerContract
+
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -13,13 +15,14 @@ class CounterPseudonymizationMethod(PseudonymizationMethodContract):
     PARAM_START_NUMBER = "start_number"
     DEFAULT_START_NUMBER = 1
 
-    def __init__(self, params: dict[str, Any] | None = None) -> None:
+    def __init__(self, params: dict[str, Any], logger: LoggerContract) -> None:
         """Initialize the counter method.
 
         Args:
-            params: Method parameters (seed, format, etc.)
+            params: Method parameters (start_number, etc.)
+            logger: Logger for logging events
         """
-        super().__init__(params=params)
+        super().__init__(params=params, logger=logger)
 
         # Cache by entity type and text
         self._mapping: dict[str, dict[str, str]] = {}
@@ -32,6 +35,10 @@ class CounterPseudonymizationMethod(PseudonymizationMethodContract):
             self.PARAM_START_NUMBER,
             self.DEFAULT_START_NUMBER,
         )
+        if self._start_number is not None and not isinstance(self._start_number, int):
+            raise ValueError("start_number must be an integer")
+        if self._start_number is not None and self._start_number < 0:
+            raise ValueError("start_number must be positive")
 
         # Thread safety for concurrent access
         self._lock = threading.Lock()
@@ -56,7 +63,7 @@ class CounterPseudonymizationMethod(PseudonymizationMethodContract):
         current_count = self._counters.get(entity_type)
         pseudonym = f"<{entity_type}_{current_count}>"
 
-        # Store for consistency
+        # Store in cache
         self._mapping[entity_type][cache_key] = pseudonym
         self._counters[entity_type] += 1
         return pseudonym
