@@ -8,6 +8,7 @@ from src.data_deidentifier.domain.types.pseudonymization_method import (
     PseudonymizationMethod,
 )
 
+from .counter import CounterPseudonymizationMethod
 from .random_number import RandomNumberPseudonymizationMethod
 
 
@@ -19,6 +20,7 @@ class PseudonymizationMethodFactory:
         dict[PseudonymizationMethod, type[PseudonymizationMethodContract]]
     ] = {
         PseudonymizationMethod.RANDOM_NUMBER: RandomNumberPseudonymizationMethod,
+        PseudonymizationMethod.COUNTER: CounterPseudonymizationMethod,
     }
 
     @classmethod

@@ -10,11 +10,10 @@ from src.data_deidentifier.domain.types.entity import Entity
 class RandomNumberPseudonymizationMethod(PseudonymizationMethodContract):
     """Random number pseudonymization method with intra-request consistency."""
 
-    FORMAT = "<{entity_type}_{number}>"
     RANDOM_BITS_NUMBER = 24
 
     def __init__(self, params: dict[str, Any] | None = None) -> None:
-        """Initialize the random method.
+        """Initialize the random number method.
 
         Args:
             params: Method parameters (seed, format, etc.)
