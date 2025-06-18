@@ -11,6 +11,7 @@ from src.data_deidentifier.domain.types.pseudonymization_method import (
 )
 
 from .counter import CounterPseudonymizationMethod
+from .crypto_hash import CryptoHashPseudonymizationMethod
 from .random_number import RandomNumberPseudonymizationMethod
 
 
@@ -23,6 +24,7 @@ class PseudonymizationMethodFactory:
     ] = {
         PseudonymizationMethod.RANDOM_NUMBER: RandomNumberPseudonymizationMethod,
         PseudonymizationMethod.COUNTER: CounterPseudonymizationMethod,
+        PseudonymizationMethod.CRYPTO_HASH: CryptoHashPseudonymizationMethod,
     }
 
     @classmethod

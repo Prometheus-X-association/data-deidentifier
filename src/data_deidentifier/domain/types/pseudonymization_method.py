@@ -6,3 +6,4 @@ class PseudonymizationMethod(StrEnum):
 
     RANDOM_NUMBER = auto()
     COUNTER = auto()
+    CRYPTO_HASH = auto()
