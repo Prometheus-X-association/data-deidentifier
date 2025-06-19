@@ -19,7 +19,7 @@ class PseudonymizeOperator(Operator):
     PARAM_METHOD: str = "method"
 
     def operate(self, text: str, params: dict | None = None) -> str:
-        """Generate a pseudonym for the entity.
+        """Generate a pseudonym for the entity, using a PseudonymizationMethodContract.
 
         Args:
             text: The original entity text

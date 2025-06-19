@@ -119,7 +119,8 @@ class PresidioEngineFactory:
                     # StructuredEngine -> DataProcessorBase._generate_operator_mapping()
                     # instantiates a new OperatorsFactory(), which only loads
                     # predefined operators from the global ANONYMIZERS list.
-                    ANONYMIZERS.append(PseudonymizeOperator)
+                    if PseudonymizeOperator not in ANONYMIZERS:
+                        ANONYMIZERS.append(PseudonymizeOperator)
 
                     cls._structured_data_engines[key] = StructuredEngine(
                         data_processor=processor,

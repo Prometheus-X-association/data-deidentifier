@@ -79,7 +79,9 @@ class PresidioStructuredDataAnonymizer(StructuredDataAnonymizerContract):
 
         entity_types = {field.entity_type for field in fields}
 
-        # Prepare operator config
+        # Create entity-specific OperatorConfig instead of single DEFAULT config
+        # Required because structured data processing doesn't auto-inject entity_type
+        # into params (unlike text anonymization), but our PseudonymizeOperator needs it
         operators = {
             entity_type: OperatorConfig(
                 operator_name=operator,
@@ -98,7 +100,7 @@ class PresidioStructuredDataAnonymizer(StructuredDataAnonymizerContract):
         except Exception as e:
             msg = "Unexpected error during structured data anonymization"
             self.logger.exception(msg, e, logger_context)
-            raise
+            raise StructuredDataAnonymizationError(msg) from e
 
         self.logger.info(
             "Structured data anonymization completed successfully",

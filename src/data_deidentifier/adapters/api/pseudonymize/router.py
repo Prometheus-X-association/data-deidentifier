@@ -35,7 +35,7 @@ router = APIRouter(prefix="/pseudonymize")
 
 @router.post(
     "/text",
-    tags=["Data pseudonymization"],
+    tags=["Text pseudonymization"],
     summary="Pseudonymize text content for PII entities",
     status_code=200,
 )
@@ -59,7 +59,7 @@ async def pseudonymize_text(
     Returns:
         Pseudonymized text and information about the entities that were pseudonymized
     """
-    effective_method = query.method  # or config.get_default_pseudonymization_method()
+    effective_method = query.method or config.get_default_pseudonymization_method()
     effective_language = query.language or config.get_default_language()
     effective_min_score = (
         query.min_score
@@ -120,7 +120,7 @@ async def pseudonymize_structured(
         Pseudonymized structured data
         and information about fields that were pseudonymized
     """
-    effective_method = query.method  # or config.get_default_pseudonymization_method()
+    effective_method = query.method or config.get_default_pseudonymization_method()
     effective_language = query.language or config.get_default_language()
     effective_entity_types = query.entity_types or config.get_default_entity_types()
 
