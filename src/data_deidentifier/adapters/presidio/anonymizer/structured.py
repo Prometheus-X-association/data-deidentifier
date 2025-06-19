@@ -77,22 +77,28 @@ class PresidioStructuredDataAnonymizer(StructuredDataAnonymizerContract):
             processor=data_processor,
         )
 
+        entity_types = {field.entity_type for field in fields}
+
+        # Prepare operator config
+        operators = {
+            entity_type: OperatorConfig(
+                operator_name=operator,
+                params={**operator_params, "entity_type": entity_type},
+            )
+            for entity_type in entity_types
+        }
+
         try:
             # Anonymize the structured data
             anonymized_data = engine.anonymize(
                 data=data,
                 structured_analysis=analyzer_results,
-                operators={
-                    "DEFAULT": OperatorConfig(
-                        operator_name=operator,
-                        params=operator_params,
-                    ),
-                },
+                operators=operators,
             )
         except Exception as e:
             msg = "Unexpected error during structured data anonymization"
             self.logger.exception(msg, e, logger_context)
-            raise StructuredDataAnonymizationError(msg) from e
+            raise
 
         self.logger.info(
             "Structured data anonymization completed successfully",

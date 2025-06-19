@@ -2,15 +2,15 @@ from typing import Any, override
 
 from logger import LoggerContract
 
-from src.data_deidentifier.adapters.presidio.anonymizer.text import (
-    PresidioTextAnonymizer,
+from src.data_deidentifier.adapters.presidio.anonymizer.structured import (
+    PresidioStructuredDataAnonymizer,
 )
-from src.data_deidentifier.domain.contracts.pseudonymizer.text import (
-    TextPseudonymizerContract,
+from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
+    StructuredDataPseudonymizerContract,
 )
 from src.data_deidentifier.domain.exceptions import (
-    TextAnonymizationError,
-    TextPseudonymizationError,
+    StructuredDataAnonymizationError,
+    StructuredDataPseudonymizationError,
 )
 from src.data_deidentifier.domain.services.pseudonymization.methods.factory import (
     PseudonymizationMethodFactory,
@@ -21,43 +21,42 @@ from src.data_deidentifier.domain.types.anonymization_operator import (
 from src.data_deidentifier.domain.types.pseudonymization_method import (
     PseudonymizationMethod,
 )
-from src.data_deidentifier.domain.types.text_pseudonymization_result import (
-    TextPseudonymizationResult,
+from src.data_deidentifier.domain.types.structured_data import StructuredData
+from src.data_deidentifier.domain.types.structured_pseudonymization_result import (
+    StructuredDataPseudonymizationResult,
 )
 
 from .custom_operator import PseudonymizeOperator
 
 
-class PresidioTextPseudonymizer(TextPseudonymizerContract):
-    """Implementation of text pseudonymizer contract using Microsoft Presidio."""
+class PresidioStructuredDataPseudonymizer(StructuredDataPseudonymizerContract):
+    """Implementation of data pseudonymizer contract using Microsoft Presidio."""
 
     def __init__(self, logger: LoggerContract) -> None:
-        """Initialize the Presidio text pseudonymizer.
+        """Initialize the Presidio structured data pseudonymizer.
 
         Args:
             logger: Logger for logging events
         """
         self.logger = logger
 
-        self.anonymizer = PresidioTextAnonymizer(logger=self.logger)
+        self.anonymizer = PresidioStructuredDataAnonymizer(logger=self.logger)
 
-        self.logger.debug("Presidio text Pseudonymizer initialized successfully")
+        self.logger.debug("Presidio data Pseudonymizer initialized successfully")
 
     @override
     def pseudonymize(
         self,
-        text: str,
+        data: StructuredData,
         method: PseudonymizationMethod,
         language: str,
-        min_score: float,
         entity_types: list[str] | None = None,
         method_params: dict[str, Any] | None = None,
-    ) -> TextPseudonymizationResult:
+    ) -> StructuredDataPseudonymizationResult:
         logger_context = {
-            "text_length": len(text),
             "method": method.value,
         }
-        self.logger.debug("Starting text pseudonymization", logger_context)
+        self.logger.debug("Starting data pseudonymization", logger_context)
 
         # Get the pseudonymization method
         try:
@@ -67,31 +66,30 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
                 logger=self.logger,
             )
         except Exception as e:
-            raise TextPseudonymizationError(
+            raise StructuredDataPseudonymizationError(
                 "Pseudonymization method loading failed",
             ) from e
 
         # Delegate to anonymizer with our custom operator
         try:
             anonymization_result = self.anonymizer.anonymize(
-                text=text,
+                data=data,
                 operator=AnonymizationOperator.PSEUDONYMIZE,
                 language=language,
-                min_score=min_score,
                 entity_types=entity_types,
                 operator_params={
                     PseudonymizeOperator.PARAM_METHOD: pseudonymization_method,
                 },
             )
-        except TextAnonymizationError as e:
-            raise TextPseudonymizationError(
+        except StructuredDataAnonymizationError as e:
+            raise StructuredDataPseudonymizationError(
                 "Pseudonymization failed during anonymization",
             ) from e
 
-        self.logger.info("Text pseudonymization completed successfully", logger_context)
+        self.logger.info("Data pseudonymization completed successfully", logger_context)
 
         # Adapt the result
-        return TextPseudonymizationResult(
-            pseudonymized_text=anonymization_result.anonymized_text,
-            detected_entities=anonymization_result.detected_entities,
+        return StructuredDataPseudonymizationResult(
+            pseudonymized_data=anonymization_result.anonymized_data,
+            detected_fields=anonymization_result.detected_fields,
         )

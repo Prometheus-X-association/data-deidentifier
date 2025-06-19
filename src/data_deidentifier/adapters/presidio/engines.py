@@ -4,6 +4,7 @@ from typing import ClassVar
 from logger import LoggerContract
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.operators.operators_factory import ANONYMIZERS
 from presidio_structured import StructuredEngine
 from presidio_structured.data.data_processors import DataProcessorBase
 
@@ -113,6 +114,13 @@ class PresidioEngineFactory:
         if key not in cls._structured_data_engines:
             with cls._lock:
                 if key not in cls._structured_data_engines:
+                    # Adding pseudonymization operator to Presidio's operator list
+                    # Issue :
+                    # StructuredEngine -> DataProcessorBase._generate_operator_mapping()
+                    # instantiates a new OperatorsFactory(), which only loads
+                    # predefined operators from the global ANONYMIZERS list.
+                    ANONYMIZERS.append(PseudonymizeOperator)
+
                     cls._structured_data_engines[key] = StructuredEngine(
                         data_processor=processor,
                     )

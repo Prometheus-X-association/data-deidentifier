@@ -7,6 +7,7 @@ from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.pseudonymization_method import (
     PseudonymizationMethod,
 )
+from src.data_deidentifier.domain.types.structured_data import StructuredData
 
 
 class PseudonymizeTextRequest(BaseModel):
@@ -57,6 +58,59 @@ class PseudonymizeTextResponse(BaseModel):
     detected_entities: list[Entity] = Field(
         ...,
         description="List of detected PII entities",
+    )
+
+    meta: dict[str, Any] | None = Field(
+        default_factory=dict,
+        description="Statistics about the pseudonymization operation",
+    )
+
+
+class PseudonymizeStructuredDataRequest(BaseModel):
+    """Request model for pseudonymizing structured data.
+
+    This model defines the input parameters
+    for the structured data pseudonymization endpoint.
+    """
+
+    data: StructuredData = Field(..., description="The structured data to pseudonymize")
+
+    method: PseudonymizationMethod | None = Field(
+        default=None,
+        description="Pseudonymization method",
+    )
+
+    method_params: dict[str, Any] | None = Field(
+        default=None,
+        description="Pseudonymization method parameters",
+    )
+
+    language: SupportedLanguage | None = Field(
+        default=None,
+        description="Language code of the data (e.g., 'en', 'fr', 'es')",
+    )
+
+    entity_types: list[str] | None = Field(
+        default=None,
+        description="Types of entities to detect (defaults to all supported types)",
+    )
+
+
+class PseudonymizeStructuredDataResponse(BaseModel):
+    """Response model for structured data pseudonymization.
+
+    This model defines the structure of the response returned
+    by the structured data pseudonymization endpoint.
+    """
+
+    pseudonymized_data: StructuredData = Field(
+        ...,
+        description="The pseudonymized structured data",
+    )
+
+    detected_fields: dict[str, str] = Field(
+        ...,
+        description="List of detected fields",
     )
 
     meta: dict[str, Any] | None = Field(

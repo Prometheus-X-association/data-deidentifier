@@ -36,3 +36,7 @@ class PseudonymizationError(DataDeidentifierError):
 
 class TextPseudonymizationError(PseudonymizationError):
     """Raised when an error occurs during the text pseudonymization process."""
+
+
+class StructuredDataPseudonymizationError(AnonymizationError):
+    """Raised when an error occurs during the data pseudonymization process."""

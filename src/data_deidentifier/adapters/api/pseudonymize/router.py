@@ -4,19 +4,31 @@ from fastapi import APIRouter, Depends
 
 from src.data_deidentifier.adapters.api.dependencies import (
     get_config,
+    get_structured_pseudonymizer,
     get_text_pseudonymizer,
     get_validator,
 )
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
+from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
+    StructuredDataPseudonymizerContract,
+)
 from src.data_deidentifier.domain.contracts.pseudonymizer.text import (
     TextPseudonymizerContract,
 )
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
+from src.data_deidentifier.domain.services.pseudonymization.structured import (
+    StructuredDataPseudonymizationService,
+)
 from src.data_deidentifier.domain.services.pseudonymization.text import (
     TextPseudonymizationService,
 )
 
-from .schemas import PseudonymizeTextRequest, PseudonymizeTextResponse
+from .schemas import (
+    PseudonymizeStructuredDataRequest,
+    PseudonymizeStructuredDataResponse,
+    PseudonymizeTextRequest,
+    PseudonymizeTextResponse,
+)
 
 router = APIRouter(prefix="/pseudonymize")
 
@@ -77,5 +89,59 @@ async def pseudonymize_text(
             "method": effective_method,
             "language": effective_language,
             "min_score": effective_min_score,
+        },
+    )
+
+
+@router.post(
+    "/structured",
+    tags=["Data pseudonymization"],
+    summary="Pseudonymize structured data content for PII entities",
+    status_code=200,
+)
+async def pseudonymize_structured(
+    query: PseudonymizeStructuredDataRequest,
+    pseudonymizer: Annotated[
+        StructuredDataPseudonymizerContract,
+        Depends(get_structured_pseudonymizer),
+    ],
+    validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
+    config: Annotated[ConfigContract, Depends(get_config)],
+) -> PseudonymizeStructuredDataResponse:
+    """Pseudonymize PII entities in structured data.
+
+    Args:
+        query: The request containing structured data to pseudonymize
+        pseudonymizer: The structured data pseudonymizer implementation
+        validator: The validator implementation
+        config: The application configuration
+
+    Returns:
+        Pseudonymized structured data
+        and information about fields that were pseudonymized
+    """
+    effective_method = query.method  # or config.get_default_pseudonymization_method()
+    effective_language = query.language or config.get_default_language()
+    effective_entity_types = query.entity_types or config.get_default_entity_types()
+
+    pseudonymize_service = StructuredDataPseudonymizationService(
+        pseudonymizer=pseudonymizer,
+        validator=validator,
+    )
+
+    result = pseudonymize_service.pseudonymize(
+        data=query.data,
+        method=effective_method,
+        method_params=query.method_params,
+        language=effective_language,
+        entity_types=effective_entity_types,
+    )
+
+    return PseudonymizeStructuredDataResponse(
+        pseudonymized_data=result.pseudonymized_data,
+        detected_fields=result.field_mapping,
+        meta={
+            "method": effective_method,
+            "language": effective_language,
         },
     )

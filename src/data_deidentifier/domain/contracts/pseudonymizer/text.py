@@ -36,6 +36,6 @@ class TextPseudonymizerContract(ABC):
             A TextPseudonymizationResult containing the pseudonymized text and metadata
 
         Raises:
-            PseudonymizationError: If pseudonymization fails
+            TextPseudonymizationError: If pseudonymization fails
         """
         raise NotImplementedError
