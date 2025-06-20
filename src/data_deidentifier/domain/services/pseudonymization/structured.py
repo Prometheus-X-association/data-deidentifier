@@ -1,11 +1,17 @@
 from typing import Any
 
+from logger import LoggerContract
+
 from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
     StructuredDataPseudonymizerContract,
 )
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 from src.data_deidentifier.domain.exceptions import (
     InvalidInputDataError,
+    StructuredDataPseudonymizationError,
+)
+from src.data_deidentifier.domain.services.pseudonymization.methods.factory import (
+    PseudonymizationMethodFactory,
 )
 from src.data_deidentifier.domain.types.pseudonymization_method import (
     PseudonymizationMethod,
@@ -27,15 +33,18 @@ class StructuredDataPseudonymizationService:
         self,
         pseudonymizer: StructuredDataPseudonymizerContract,
         validator: EntityTypeValidatorContract,
+        logger: LoggerContract,
     ) -> None:
         """Initialize the structured data pseudonymization service.
 
         Args:
             pseudonymizer: Implementation of the data pseudonymization contract
             validator: Implementation of the validator contract
+            logger: Logger for logging events
         """
         self.pseudonymizer = pseudonymizer
         self.validator = validator
+        self.logger = logger
 
     def pseudonymize(
         self,
@@ -57,9 +66,25 @@ class StructuredDataPseudonymizationService:
         Returns:
             A StructuredDataPseudonymizationResult
             containing the pseudonymized data and metadata
+
+        Raises:
+            InvalidInputDataError: If the text is empty
+            StructuredDataPseudonymizationError: If the method is unknown
         """
         if not data:
             raise InvalidInputDataError("Data cannot be empty")
+
+        # Get the pseudonymization method
+        try:
+            method_instance = PseudonymizationMethodFactory.create(
+                method=method,
+                method_params=method_params or {},
+                logger=self.logger,
+            )
+        except Exception as e:
+            raise StructuredDataPseudonymizationError(
+                "Pseudonymization method loading failed",
+            ) from e
 
         # Validate data
         effective_entity_types = self.validator.validate_entity_types(
@@ -69,8 +94,7 @@ class StructuredDataPseudonymizationService:
         # Pseudonymize the text
         return self.pseudonymizer.pseudonymize(
             data=data,
-            method=method,
-            method_params=method_params,
+            method=method_instance,
             entity_types=effective_entity_types,
             language=language,
         )

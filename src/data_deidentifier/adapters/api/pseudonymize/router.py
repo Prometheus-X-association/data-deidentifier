@@ -1,9 +1,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from logger import LoggerContract
 
 from src.data_deidentifier.adapters.api.dependencies import (
     get_config,
+    get_logger,
     get_structured_pseudonymizer,
     get_text_pseudonymizer,
     get_validator,
@@ -47,6 +49,7 @@ async def pseudonymize_text(
     ],
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     config: Annotated[ConfigContract, Depends(get_config)],
+    logger: Annotated[LoggerContract, Depends(get_logger)],
 ) -> PseudonymizeTextResponse:
     """Pseudonymize PII entities in text content.
 
@@ -55,6 +58,7 @@ async def pseudonymize_text(
         pseudonymizer: The text pseudonymizer implementation
         validator: The validator implementation
         config: The application configuration
+        logger: The logger instance
 
     Returns:
         Pseudonymized text and information about the entities that were pseudonymized
@@ -71,6 +75,7 @@ async def pseudonymize_text(
     pseudonymize_service = TextPseudonymizationService(
         pseudonymizer=pseudonymizer,
         validator=validator,
+        logger=logger,
     )
 
     result = pseudonymize_service.pseudonymize(
@@ -107,6 +112,7 @@ async def pseudonymize_structured(
     ],
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     config: Annotated[ConfigContract, Depends(get_config)],
+    logger: Annotated[LoggerContract, Depends(get_logger)],
 ) -> PseudonymizeStructuredDataResponse:
     """Pseudonymize PII entities in structured data.
 
@@ -115,6 +121,7 @@ async def pseudonymize_structured(
         pseudonymizer: The structured data pseudonymizer implementation
         validator: The validator implementation
         config: The application configuration
+        logger: The logger instance
 
     Returns:
         Pseudonymized structured data
@@ -127,6 +134,7 @@ async def pseudonymize_structured(
     pseudonymize_service = StructuredDataPseudonymizationService(
         pseudonymizer=pseudonymizer,
         validator=validator,
+        logger=logger,
     )
 
     result = pseudonymize_service.pseudonymize(

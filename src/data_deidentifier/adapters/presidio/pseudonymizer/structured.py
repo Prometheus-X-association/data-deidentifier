@@ -1,9 +1,12 @@
-from typing import Any, override
+from typing import override
 
 from logger import LoggerContract
 
 from src.data_deidentifier.adapters.presidio.anonymizer.structured import (
     PresidioStructuredDataAnonymizer,
+)
+from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
+    PseudonymizationMethodContract,
 )
 from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
     StructuredDataPseudonymizerContract,
@@ -12,14 +15,8 @@ from src.data_deidentifier.domain.exceptions import (
     StructuredDataAnonymizationError,
     StructuredDataPseudonymizationError,
 )
-from src.data_deidentifier.domain.services.pseudonymization.methods.factory import (
-    PseudonymizationMethodFactory,
-)
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
-)
-from src.data_deidentifier.domain.types.pseudonymization_method import (
-    PseudonymizationMethod,
 )
 from src.data_deidentifier.domain.types.structured_data import StructuredData
 from src.data_deidentifier.domain.types.structured_pseudonymization_result import (
@@ -48,27 +45,14 @@ class PresidioStructuredDataPseudonymizer(StructuredDataPseudonymizerContract):
     def pseudonymize(
         self,
         data: StructuredData,
-        method: PseudonymizationMethod,
+        method: PseudonymizationMethodContract,
         language: str,
         entity_types: list[str] | None = None,
-        method_params: dict[str, Any] | None = None,
     ) -> StructuredDataPseudonymizationResult:
         logger_context = {
-            "method": method.value,
+            "method": type(method),
         }
         self.logger.debug("Starting data pseudonymization", logger_context)
-
-        # Get the pseudonymization method
-        try:
-            pseudonymization_method = PseudonymizationMethodFactory.create(
-                method=method,
-                method_params=method_params or {},
-                logger=self.logger,
-            )
-        except Exception as e:
-            raise StructuredDataPseudonymizationError(
-                "Pseudonymization method loading failed",
-            ) from e
 
         # Delegate to anonymizer with our custom operator
         try:
@@ -78,7 +62,7 @@ class PresidioStructuredDataPseudonymizer(StructuredDataPseudonymizerContract):
                 language=language,
                 entity_types=entity_types,
                 operator_params={
-                    PseudonymizeOperator.PARAM_METHOD: pseudonymization_method,
+                    PseudonymizeOperator.PARAM_METHOD: method,
                 },
             )
         except StructuredDataAnonymizationError as e:

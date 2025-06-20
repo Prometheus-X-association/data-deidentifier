@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
-from src.data_deidentifier.domain.types.pseudonymization_method import (
-    PseudonymizationMethod,
+from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
+    PseudonymizationMethodContract,
 )
 from src.data_deidentifier.domain.types.structured_data import StructuredData
 from src.data_deidentifier.domain.types.structured_pseudonymization_result import (
@@ -17,19 +16,17 @@ class StructuredDataPseudonymizerContract(ABC):
     def pseudonymize(
         self,
         data: StructuredData,
-        method: PseudonymizationMethod,
+        method: PseudonymizationMethodContract,
         language: str,
         entity_types: list[str] | None = None,
-        method_params: dict[str, Any] | None = None,
     ) -> StructuredDataPseudonymizationResult:
         """Pseudonymize PII entities in structured data.
 
         Args:
             data: Original structured data containing PII entities
-            method: Pseudonymization method
+            method: Pseudonymization method instance
             language: Language code of the data
             entity_types: Types of entities to detect (None means all supported types)
-            method_params: Optional parameters for the method
 
         Returns:
             A StructuredDataPseudonymizationResult
