@@ -54,10 +54,10 @@ class StructuredDataPseudonymizationService:
         entity_types: list[str],
         method_params: dict[str, Any] | None = None,
     ) -> StructuredDataPseudonymizationResult:
-        """Anonymize PII entities in text.
+        """Pseudonymize PII entities in text.
 
         Args:
-            data: The structured data to anonymize
+            data: The structured data to pseudonymize
             method: Pseudonymization method to use
             language: Language code of the text
             entity_types: Entity types to detect

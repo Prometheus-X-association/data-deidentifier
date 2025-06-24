@@ -54,7 +54,7 @@ class TextPseudonymizationService:
         entity_types: list[str],
         method_params: dict[str, Any] | None = None,
     ) -> TextPseudonymizationResult:
-        """Anonymize PII entities in text.
+        """Pseudonymize PII entities in text.
 
         Args:
             text: The text to pseudonymize

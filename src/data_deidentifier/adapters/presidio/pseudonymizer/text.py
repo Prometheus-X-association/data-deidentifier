@@ -50,7 +50,7 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
         entity_types: list[str] | None = None,
     ) -> TextPseudonymizationResult:
         logger_context = {
-            "method": type(method),
+            "method": type(method).__name__,
         }
         self.logger.debug("Starting text pseudonymization", logger_context)
 
