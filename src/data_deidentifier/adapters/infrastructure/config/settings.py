@@ -40,6 +40,13 @@ class Settings(CoreSettings, ConfigContract):
         default=PseudonymizationMethod.RANDOM_NUMBER,
     )
 
+    enrichment_enabled: bool = Field(default=False)
+    enrichment_timeout: int = Field(default=10, ge=1, le=60)
+
+    # URL mappings for entity enrichment (JSON string format)
+    # Example: '{"LOCATION": "https://api.example.com/location"}' # noqa: ERA001
+    enrichment_url_mappings: dict[str, str] = Field(default_factory=dict)
+
     @override
     def get_default_language(self) -> str:
         return self.default_language
@@ -59,3 +66,15 @@ class Settings(CoreSettings, ConfigContract):
     @override
     def get_default_pseudonymization_method(self) -> PseudonymizationMethod:
         return self.default_pseudonymization_method
+
+    @override
+    def get_enrichment_enabled(self) -> bool:
+        return self.enrichment_enabled
+
+    @override
+    def get_enrichment_url_mappings(self) -> dict[str, str]:
+        return self.enrichment_url_mappings
+
+    @override
+    def get_enrichment_timeout_seconds(self) -> int:
+        return self.enrichment_timeout

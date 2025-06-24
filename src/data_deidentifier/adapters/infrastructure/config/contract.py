@@ -56,3 +56,33 @@ class ConfigContract(CoreConfigContract):
         Returns:
             The default pseudonymization method
         """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_enrichment_enabled(self) -> bool:
+        """Check if entity enrichment is enabled.
+
+        Returns:
+            bool: True if entity enrichment is enabled, False otherwise.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_enrichment_url_mappings(self) -> dict[str, str]:
+        """Get the URL mappings for entity enrichment services.
+
+        Returns:
+            dict[str, str]: A mapping of entity types to their corresponding
+                enrichment service URLs. Keys are entity types (e.g., 'LOCATION')
+                and values are HTTP endpoints for enrichment.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_enrichment_timeout_seconds(self) -> int:
+        """Get the timeout for enrichment HTTP requests.
+
+        Returns:
+            int: The timeout in seconds for HTTP requests to enrichment services.
+        """
+        raise NotImplementedError
