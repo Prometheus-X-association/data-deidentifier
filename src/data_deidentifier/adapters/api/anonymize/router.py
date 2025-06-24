@@ -4,18 +4,10 @@ from fastapi import APIRouter, Depends
 
 from src.data_deidentifier.adapters.api.dependencies import (
     get_config,
-    get_structured_anonymizer,
-    get_text_anonymizer,
-    get_validator,
+    get_structured_data_anonymization_service,
+    get_text_anonymization_service,
 )
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.domain.contracts.anonymizer.structured import (
-    StructuredDataAnonymizerContract,
-)
-from src.data_deidentifier.domain.contracts.anonymizer.text import (
-    TextAnonymizerContract,
-)
-from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 from src.data_deidentifier.domain.services.anonymization.structured import (
     StructuredDataAnonymizationService,
 )
@@ -41,16 +33,17 @@ router = APIRouter(prefix="/anonymize")
 )
 async def anonymize_text(
     query: AnonymizeTextRequest,
-    anonymizer: Annotated[TextAnonymizerContract, Depends(get_text_anonymizer)],
-    validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
+    anonymization_service: Annotated[
+        TextAnonymizationService,
+        Depends(get_text_anonymization_service),
+    ],
     config: Annotated[ConfigContract, Depends(get_config)],
 ) -> AnonymizeTextResponse:
     """Anonymize PII entities in text content.
 
     Args:
         query: The request containing text to anonymize
-        anonymizer: The text anonymizer implementation
-        validator: The validator implementation
+        anonymization_service: The text anonymizer service instance
         config: The application configuration
 
     Returns:
@@ -65,12 +58,7 @@ async def anonymize_text(
     )
     effective_entity_types = query.entity_types or config.get_default_entity_types()
 
-    anonymize_service = TextAnonymizationService(
-        anonymizer=anonymizer,
-        validator=validator,
-    )
-
-    result = anonymize_service.anonymize(
+    result = anonymization_service.anonymize(
         text=query.text,
         operator=effective_operator,
         operator_params=query.operator_params,
@@ -98,19 +86,17 @@ async def anonymize_text(
 )
 async def anonymize_structured(
     query: AnonymizeStructuredDataRequest,
-    anonymizer: Annotated[
-        StructuredDataAnonymizerContract,
-        Depends(get_structured_anonymizer),
+    anonymization_service: Annotated[
+        StructuredDataAnonymizationService,
+        Depends(get_structured_data_anonymization_service),
     ],
-    validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     config: Annotated[ConfigContract, Depends(get_config)],
 ) -> AnonymizeStructuredDataResponse:
     """Anonymize PII entities in structured data.
 
     Args:
         query: The request containing structured data to anonymize
-        anonymizer: The structured data anonymizer implementation
-        validator: The validator implementation
+        anonymization_service: The structured data anonymization instance
         config: The application configuration
 
     Returns:
@@ -120,12 +106,7 @@ async def anonymize_structured(
     effective_language = query.language or config.get_default_language()
     effective_entity_types = query.entity_types or config.get_default_entity_types()
 
-    anonymize_service = StructuredDataAnonymizationService(
-        anonymizer=anonymizer,
-        validator=validator,
-    )
-
-    result = anonymize_service.anonymize(
+    result = anonymization_service.anonymize(
         data=query.data,
         operator=effective_operator,
         operator_params=query.operator_params,
