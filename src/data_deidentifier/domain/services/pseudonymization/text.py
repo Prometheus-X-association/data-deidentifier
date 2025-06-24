@@ -2,6 +2,7 @@ from typing import Any
 
 from logger import LoggerContract
 
+from src.data_deidentifier.domain.contracts.enricher import EntityEnricherContract
 from src.data_deidentifier.domain.contracts.pseudonymizer.text import (
     TextPseudonymizerContract,
 )
@@ -33,6 +34,7 @@ class TextPseudonymizationService:
         pseudonymizer: TextPseudonymizerContract,
         validator: EntityTypeValidatorContract,
         logger: LoggerContract,
+        entity_enricher: EntityEnricherContract | None = None,
     ) -> None:
         """Initialize the text pseudonymization service.
 
@@ -40,10 +42,13 @@ class TextPseudonymizationService:
             pseudonymizer: Implementation of the text pseudonymization contract
             validator: Implementation of the validator contract
             logger: Logger for logging events
+            entity_enricher: Optional enrichment service for adding contextual
+                information to pseudonyms found in structured data
         """
         self.pseudonymizer = pseudonymizer
         self.validator = validator
         self.logger = logger
+        self.entity_enricher = entity_enricher
 
     def pseudonymize(  # noqa: PLR0913
         self,
@@ -98,4 +103,5 @@ class TextPseudonymizationService:
             entity_types=effective_entity_types,
             language=language,
             min_score=min_score,
+            entity_enricher=self.entity_enricher,
         )
