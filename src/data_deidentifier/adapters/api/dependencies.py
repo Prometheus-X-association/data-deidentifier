@@ -4,8 +4,8 @@ from fastapi import Depends, Request
 from logger import LoggerContract
 
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.adapters.infrastructure.enrichment.http_service import (
-    HttpPseudonymEnricher,
+from src.data_deidentifier.adapters.infrastructure.enrichment.factory import (
+    EnrichmentFactory,
 )
 from src.data_deidentifier.adapters.presidio.anonymizer.structured import (
     PresidioStructuredDataAnonymizer,
@@ -26,7 +26,9 @@ from src.data_deidentifier.domain.contracts.anonymizer.structured import (
 from src.data_deidentifier.domain.contracts.anonymizer.text import (
     TextAnonymizerContract,
 )
-from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
+from src.data_deidentifier.domain.contracts.enricher.manager import (
+    PseudonymEnrichmentManagerContract,
+)
 from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
     StructuredDataPseudonymizerContract,
 )
@@ -123,7 +125,7 @@ async def get_structured_anonymizer(
 async def get_pseudonym_enricher(
     config: Annotated[ConfigContract, Depends(get_config)],
     logger: Annotated[LoggerContract, Depends(get_logger)],
-) -> PseudonymEnricherContract | None:
+) -> PseudonymEnrichmentManagerContract | None:
     """Create and return a pseudonym enricher instance.
 
     Args:
@@ -131,18 +133,14 @@ async def get_pseudonym_enricher(
         logger: The logger instance
 
     Returns:
-        An implementation of the pseudonym enricher contract.
+        An implementation of the enrichment manager contract.
     """
-    if not config.get_enrichment_enabled():
-        logger.info("Entity enrichment disabled")
+    enrichment_configs = config.get_enrichment_configurations()
+    if not enrichment_configs:
+        logger.warning("No configurations provided for entity enrichment")
         return None
 
-    url_mappings = config.get_enrichment_url_mappings()
-    if not url_mappings:
-        logger.warning("Entity enrichment enabled but no URL mappings configured")
-        return None
-
-    return HttpPseudonymEnricher(
+    return EnrichmentFactory(
         config=config,
         logger=logger,
     )
@@ -246,7 +244,7 @@ async def get_text_pseudonymization_service(
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     logger: Annotated[LoggerContract, Depends(get_logger)],
     pseudonym_enricher: Annotated[
-        PseudonymEnricherContract | None,
+        PseudonymEnrichmentManagerContract | None,
         Depends(get_pseudonym_enricher),
     ],
 ) -> TextPseudonymizationService:
@@ -284,7 +282,7 @@ async def get_structured_data_pseudonymization_service(
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     logger: Annotated[LoggerContract, Depends(get_logger)],
     pseudonym_enricher: Annotated[
-        PseudonymEnricherContract | None,
+        PseudonymEnrichmentManagerContract | None,
         Depends(get_pseudonym_enricher),
     ],
 ) -> StructuredDataPseudonymizationService:

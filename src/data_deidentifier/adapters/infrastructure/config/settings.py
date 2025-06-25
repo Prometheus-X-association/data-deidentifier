@@ -1,4 +1,4 @@
-from typing import Annotated, override
+from typing import Annotated, Any, override
 
 from configcore import Settings as CoreSettings
 from pydantic import BeforeValidator, Field
@@ -40,12 +40,9 @@ class Settings(CoreSettings, ConfigContract):
         default=PseudonymizationMethod.RANDOM_NUMBER,
     )
 
-    enrichment_enabled: bool = Field(default=False)
-    enrichment_timeout: int = Field(default=10, ge=1, le=60)
-
-    # URL mappings for entity enrichment (JSON string format)
-    # Example: '{"LOCATION": "https://api.example.com/location"}' # noqa: ERA001
-    enrichment_url_mappings: dict[str, str] = Field(default_factory=dict)
+    # Config mappings for entity enrichment (JSON string format), example:
+    # '{"LOCATION": {"type": "http", "url": http://geo-service/enrich"}}' # noqa: ERA001
+    enrichment_configurations: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
     @override
     def get_default_language(self) -> str:
@@ -68,13 +65,5 @@ class Settings(CoreSettings, ConfigContract):
         return self.default_pseudonymization_method
 
     @override
-    def get_enrichment_enabled(self) -> bool:
-        return self.enrichment_enabled
-
-    @override
-    def get_enrichment_url_mappings(self) -> dict[str, str]:
-        return self.enrichment_url_mappings
-
-    @override
-    def get_enrichment_timeout_seconds(self) -> int:
-        return self.enrichment_timeout
+    def get_enrichment_configurations(self) -> dict[str, dict[str, Any]]:
+        return self.enrichment_configurations

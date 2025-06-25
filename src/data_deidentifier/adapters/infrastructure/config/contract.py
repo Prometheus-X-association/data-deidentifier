@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Any
 
 from configcore import ConfigContract as CoreConfigContract
 
@@ -59,30 +60,21 @@ class ConfigContract(CoreConfigContract):
         raise NotImplementedError
 
     @abstractmethod
-    def get_enrichment_enabled(self) -> bool:
-        """Check if entity enrichment is enabled.
+    def get_enrichment_configurations(self) -> dict[str, dict[str, Any]]:
+        """Get the enrichment configurations for entity types.
 
         Returns:
-            bool: True if entity enrichment is enabled, False otherwise.
-        """
-        raise NotImplementedError
+            dict[str, dict[str, Any]]: A mapping of entity types to their
+                enrichment configurations. Keys are entity types (e.g., 'LOCATION')
+                and values are configuration dictionaries containing enricher
+                type and type-specific parameters.
 
-    @abstractmethod
-    def get_enrichment_url_mappings(self) -> dict[str, str]:
-        """Get the URL mappings for entity enrichment services.
-
-        Returns:
-            dict[str, str]: A mapping of entity types to their corresponding
-                enrichment service URLs. Keys are entity types (e.g., 'LOCATION')
-                and values are HTTP endpoints for enrichment.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_enrichment_timeout_seconds(self) -> int:
-        """Get the timeout for enrichment HTTP requests.
-
-        Returns:
-            int: The timeout in seconds for HTTP requests to enrichment services.
+        Examples:
+            {
+                "LOCATION": {
+                    "type": "http",
+                    "url": "http://geo-service/enrich",
+                }
+            }
         """
         raise NotImplementedError

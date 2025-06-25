@@ -71,8 +71,12 @@ class BaseHttpClient:
             Only server errors (5xx) are retried. Client errors (4xx) indicate
             invalid requests and are not retried.
         """
-        log_context = {"url": url, "method": method, "timeout_seconds": timeout_seconds}
-        self.logger.debug("Making HTTP request", log_context)
+        logger_context = {
+            "url": url,
+            "method": method,
+            "timeout_seconds": timeout_seconds,
+        }
+        self.logger.debug("Making HTTP request", logger_context)
 
         try:
             with httpx.Client() as client:
@@ -86,7 +90,7 @@ class BaseHttpClient:
                 response.raise_for_status()
         except HTTPError as e:
             msg = "HTTP error occurred"
-            self.logger.exception(msg, e, log_context)
+            self.logger.exception(msg, e, logger_context)
             raise HttpClientError(msg) from e
         else:
             self.logger.debug(

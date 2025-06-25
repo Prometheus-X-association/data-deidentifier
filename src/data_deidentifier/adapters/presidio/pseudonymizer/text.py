@@ -6,7 +6,9 @@ from src.data_deidentifier.adapters.infrastructure.config.contract import Config
 from src.data_deidentifier.adapters.presidio.anonymizer.text import (
     PresidioTextAnonymizer,
 )
-from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
+from src.data_deidentifier.domain.contracts.enricher.manager import (
+    PseudonymEnrichmentManagerContract,
+)
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -52,27 +54,12 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
         language: str,
         min_score: float,
         entity_types: list[str] | None = None,
-        pseudonym_enricher: PseudonymEnricherContract | None = None,
+        pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,
     ) -> TextPseudonymizationResult:
         logger_context = {
             "method": type(method).__name__,
         }
         self.logger.debug("Starting text pseudonymization", logger_context)
-
-        operator_params = {
-            PseudonymizeOperator.PARAM_METHOD: method,
-        }
-
-        if pseudonym_enricher:
-            url_mappings = self.config.get_enrichment_url_mappings()
-            enrichable_types = set(url_mappings.keys())
-            if enrichable_types:
-                operator_params.update(
-                    {
-                        PseudonymizeOperator.PARAM_ENRICHER: pseudonym_enricher,
-                        PseudonymizeOperator.PARAM_ENRICHABLE_TYPES: enrichable_types,
-                    },
-                )
 
         # Delegate to anonymizer with our custom operator
         try:
@@ -82,7 +69,11 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
                 language=language,
                 min_score=min_score,
                 entity_types=entity_types,
-                operator_params=operator_params,
+                operator_params={
+                    PseudonymizeOperator.PARAM_METHOD: method,
+                    PseudonymizeOperator.PARAM_ENRICHER: pseudonym_enricher,
+                    PseudonymizeOperator.PARAM_CONFIG: self.config,
+                },
             )
         except TextAnonymizationError as e:
             raise TextPseudonymizationError(

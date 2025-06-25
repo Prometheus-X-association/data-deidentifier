@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from typing import Any
+
+from logger import LoggerContract
 
 from src.data_deidentifier.domain.types.entity import Entity
 
@@ -9,6 +12,16 @@ class PseudonymEnricherContract(ABC):
     Defines the interface for services that provide additional contextual information
     for detected PII entities that enhance the output while maintaining privacy.
     """
+
+    def __init__(self, params: dict[str, Any], logger: LoggerContract) -> None:
+        """Initialize the enrichment method.
+
+        Args:
+            params: Optional parameters for the method configuration
+            logger: Logger for logging events
+        """
+        self.params = params
+        self.logger = logger
 
     @abstractmethod
     def get_enrichment(self, entity: Entity) -> str | None:
@@ -26,10 +39,5 @@ class PseudonymEnricherContract(ABC):
 
         Raises:
             PseudonymEnrichmentError: If an error while enriching occurs.
-
-        Examples:
-            >>> entity = Entity(text="London", type="LOCATION", ...)
-            >>> enricher.get_enrichment(entity)
-            "United Kingdom"
         """
         raise NotImplementedError

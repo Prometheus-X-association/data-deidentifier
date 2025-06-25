@@ -1,13 +1,14 @@
-from typing import override
+from typing import Any, override
 
 from logger import LoggerContract
 
-from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
 from src.data_deidentifier.adapters.infrastructure.http.client import (
     BaseHttpClient,
     HttpClientError,
 )
-from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
+from src.data_deidentifier.domain.contracts.enricher.enricher import (
+    PseudonymEnricherContract,
+)
 from src.data_deidentifier.domain.exceptions import PseudonymEnrichmentError
 from src.data_deidentifier.domain.types.entity import Entity
 
@@ -19,39 +20,34 @@ class HttpPseudonymEnricher(PseudonymEnricherContract):
     the base HTTP client with enrichment-specific logic and error handling.
     """
 
-    def __init__(self, config: ConfigContract, logger: LoggerContract) -> None:
-        """Initialize the enrichment HTTP client.
+    PARAM_URL = "url"
+    PARAM_TIMEOUT = "timeout"
 
-        Args:
-            config: Configuration contract providing enrichment settings
-            logger: Logger instance for recording enrichment operations
-        """
-        self.config = config
-        self.logger = logger
+    @override
+    def __init__(self, params: dict[str, Any], logger: LoggerContract) -> None:
+        super().__init__(params=params, logger=logger)
 
         self.http_client = BaseHttpClient(logger)
 
     @override
     def get_enrichment(self, entity: Entity) -> str | None:
-        url_mappings = self.config.get_enrichment_url_mappings()
-        if entity.type not in url_mappings:
+        if self.PARAM_URL not in self.params:
             return None
-
-        url = url_mappings.get(entity.type)
+        url = self.params.get(self.PARAM_URL)
         entity_text = entity.text
 
         logger_context = {
             "entity_type": entity.type,
             "url": url,
         }
-        self.logger.debug("Starting enrichment", logger_context)
+        self.logger.debug("Starting pseudonym enrichment via HTTP", logger_context)
 
         try:
             response = self.http_client.request(
                 url=url,
                 method="POST",
                 data={"text": entity_text},
-                timeout_seconds=self.config.get_enrichment_timeout_seconds(),
+                timeout_seconds=self.params.get(self.PARAM_TIMEOUT),
             )
 
             data = response.json()

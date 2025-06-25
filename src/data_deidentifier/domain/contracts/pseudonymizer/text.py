@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
-from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
+from src.data_deidentifier.domain.contracts.enricher.manager import (
+    PseudonymEnrichmentManagerContract,
+)
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -20,7 +22,7 @@ class TextPseudonymizerContract(ABC):
         language: str,
         min_score: float,
         entity_types: list[str] | None = None,
-        pseudonym_enricher: PseudonymEnricherContract | None = None,
+        pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,
     ) -> TextPseudonymizationResult:
         """Pseudonymize PII entities in text.
 

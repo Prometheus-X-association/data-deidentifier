@@ -2,7 +2,9 @@ from typing import Any
 
 from logger import LoggerContract
 
-from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
+from src.data_deidentifier.domain.contracts.enricher.manager import (
+    PseudonymEnrichmentManagerContract,
+)
 from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
     StructuredDataPseudonymizerContract,
 )
@@ -35,7 +37,7 @@ class StructuredDataPseudonymizationService:
         pseudonymizer: StructuredDataPseudonymizerContract,
         validator: EntityTypeValidatorContract,
         logger: LoggerContract,
-        pseudonym_enricher: PseudonymEnricherContract | None = None,
+        pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,
     ) -> None:
         """Initialize the structured data pseudonymization service.
 
