@@ -42,5 +42,5 @@ class StructuredDataPseudonymizationError(AnonymizationError):
     """Raised when an error occurs during the data pseudonymization process."""
 
 
-class EntityEnrichmentError(DataDeidentifierError):
-    """Raised when an error occurs during entity enrichment process."""
+class PseudonymEnrichmentError(DataDeidentifierError):
+    """Raised when an error occurs during pseudonym enrichment process."""

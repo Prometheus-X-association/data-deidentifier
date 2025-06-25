@@ -6,7 +6,7 @@ from src.data_deidentifier.adapters.infrastructure.config.contract import Config
 from src.data_deidentifier.adapters.presidio.anonymizer.structured import (
     PresidioStructuredDataAnonymizer,
 )
-from src.data_deidentifier.domain.contracts.enricher import EntityEnricherContract
+from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -35,7 +35,7 @@ class PresidioStructuredDataPseudonymizer(StructuredDataPseudonymizerContract):
         """Initialize the Presidio structured data pseudonymizer.
 
         Args:
-            config: Configuration contract.
+            config: Configuration contract
             logger: Logger for logging events
         """
         self.config = config
@@ -52,7 +52,7 @@ class PresidioStructuredDataPseudonymizer(StructuredDataPseudonymizerContract):
         method: PseudonymizationMethodContract,
         language: str,
         entity_types: list[str] | None = None,
-        entity_enricher: EntityEnricherContract | None = None,
+        pseudonym_enricher: PseudonymEnricherContract | None = None,
     ) -> StructuredDataPseudonymizationResult:
         logger_context = {
             "method": type(method),
@@ -62,13 +62,13 @@ class PresidioStructuredDataPseudonymizer(StructuredDataPseudonymizerContract):
         operator_params = {
             PseudonymizeOperator.PARAM_METHOD: method,
         }
-        if entity_enricher:
+        if pseudonym_enricher:
             url_mappings = self.config.get_enrichment_url_mappings()
             enrichable_types = set(url_mappings.keys())
             if enrichable_types:
                 operator_params.update(
                     {
-                        PseudonymizeOperator.PARAM_ENRICHER: entity_enricher,
+                        PseudonymizeOperator.PARAM_ENRICHER: pseudonym_enricher,
                         PseudonymizeOperator.PARAM_ENRICHABLE_TYPES: enrichable_types,
                     },
                 )

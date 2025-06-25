@@ -7,12 +7,12 @@ from src.data_deidentifier.adapters.infrastructure.http.client import (
     BaseHttpClient,
     HttpClientError,
 )
-from src.data_deidentifier.domain.contracts.enricher import EntityEnricherContract
-from src.data_deidentifier.domain.exceptions import EntityEnrichmentError
+from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
+from src.data_deidentifier.domain.exceptions import PseudonymEnrichmentError
 from src.data_deidentifier.domain.types.entity import Entity
 
 
-class HttpEntityEnricher(EntityEnricherContract):
+class HttpPseudonymEnricher(PseudonymEnricherContract):
     """HTTP client specifically for entity enrichment services.
 
     Provides a higher-level interface for making enrichment requests by wrapping
@@ -23,8 +23,8 @@ class HttpEntityEnricher(EntityEnricherContract):
         """Initialize the enrichment HTTP client.
 
         Args:
-            config: Configuration contract providing enrichment settings.
-            logger: Logger instance for recording enrichment operations.
+            config: Configuration contract providing enrichment settings
+            logger: Logger instance for recording enrichment operations
         """
         self.config = config
         self.logger = logger
@@ -59,7 +59,7 @@ class HttpEntityEnricher(EntityEnricherContract):
 
             if enrichment and isinstance(enrichment, str) and enrichment.strip():
                 self.logger.debug(
-                    "Entity enrichment successful",
+                    "Pseudonym enrichment successful",
                     {"enrichment": enrichment},
                 )
                 return enrichment
@@ -68,13 +68,13 @@ class HttpEntityEnricher(EntityEnricherContract):
 
         except HttpClientError as e:
             # Transform generic HTTP error into enrichment-specific context
-            raise EntityEnrichmentError from e
+            raise PseudonymEnrichmentError from e
         except Exception as e:
             # Handle JSON parsing errors, etc.
             self.logger.warning(
-                "Entity enrichment processing failed",
+                "Pseudonym enrichment processing failed",
                 {"error": str(e), **logger_context},
             )
-            raise EntityEnrichmentError from e
+            raise PseudonymEnrichmentError from e
 
         return None

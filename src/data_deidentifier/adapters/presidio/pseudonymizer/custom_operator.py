@@ -2,14 +2,16 @@ from typing import TYPE_CHECKING
 
 from presidio_anonymizer.operators import Operator, OperatorType
 
-from src.data_deidentifier.domain.exceptions import EntityEnrichmentError
+from src.data_deidentifier.domain.exceptions import PseudonymEnrichmentError
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
 from src.data_deidentifier.domain.types.entity import Entity
 
 if TYPE_CHECKING:
-    from src.data_deidentifier.domain.contracts.enricher import EntityEnricherContract
+    from src.data_deidentifier.domain.contracts.enricher import (
+        PseudonymEnricherContract,
+    )
     from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
         PseudonymizationMethodContract,
     )
@@ -25,7 +27,7 @@ class PseudonymizeOperator(Operator):
 
     Attributes:
         PARAM_METHOD: Parameter key for the pseudonymization method.
-        PARAM_ENRICHER: Parameter key for the optional entity enricher.
+        PARAM_ENRICHER: Parameter key for the optional pseudonym enricher.
 
     Examples:
         Input text: "John lives in London"
@@ -35,6 +37,7 @@ class PseudonymizeOperator(Operator):
     PARAM_METHOD: str = "method"
     PARAM_ENRICHER: str = "enricher"
     PARAM_ENRICHABLE_TYPES = "enrichable_types"
+    ENRICHMENT_FORMAT = ""
 
     def operate(self, text: str, params: dict | None = None) -> str:
         """Generate a pseudonym for the entity, using a PseudonymizationMethodContract.
@@ -49,7 +52,7 @@ class PseudonymizeOperator(Operator):
         method: PseudonymizationMethodContract = params.get(self.PARAM_METHOD)
 
         enrichable_types = params.get(self.PARAM_ENRICHABLE_TYPES, set())
-        enricher: EntityEnricherContract | None = params.get(self.PARAM_ENRICHER)
+        enricher: PseudonymEnricherContract | None = params.get(self.PARAM_ENRICHER)
 
         entity = Entity(
             text=text,
@@ -64,7 +67,7 @@ class PseudonymizeOperator(Operator):
         if enricher and enrichable_types and entity.type in enrichable_types:
             try:
                 enrichment = enricher.get_enrichment(entity)
-            except EntityEnrichmentError:
+            except PseudonymEnrichmentError:
                 enrichment = None
 
             if enrichment:

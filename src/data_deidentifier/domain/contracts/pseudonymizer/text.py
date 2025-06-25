@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.data_deidentifier.domain.contracts.enricher import EntityEnricherContract
+from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -20,7 +20,7 @@ class TextPseudonymizerContract(ABC):
         language: str,
         min_score: float,
         entity_types: list[str] | None = None,
-        entity_enricher: EntityEnricherContract | None = None,
+        pseudonym_enricher: PseudonymEnricherContract | None = None,
     ) -> TextPseudonymizationResult:
         """Pseudonymize PII entities in text.
 
@@ -30,8 +30,8 @@ class TextPseudonymizerContract(ABC):
             language: Language code of the text
             min_score: Minimum confidence score threshold
             entity_types: Types of entities to detect (None means all supported types)
-            entity_enricher: Optional enrichment service for adding contextual
-                information to pseudonyms found in structured data
+            pseudonym_enricher: Optional enrichment service for adding contextual
+                information to pseudonyms found in text
 
         Returns:
             A TextPseudonymizationResult containing the pseudonymized text and metadata

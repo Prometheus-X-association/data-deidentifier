@@ -32,7 +32,7 @@ class BaseHttpClient:
         """Initialize the HTTP client.
 
         Args:
-            logger: Logger instance for recording HTTP operations and errors.
+            logger: Logger instance for recording HTTP operations and errors
         """
         self.logger = logger
 
@@ -55,10 +55,10 @@ class BaseHttpClient:
         retries on server errors (5xx) with exponential backoff.
 
         Args:
-            url: Complete URL for the request.
-            method: HTTP method to use (GET, POST, PUT, etc.).
-            data: Request payload data.
-            timeout_seconds: Request timeout in seconds. If None, uses config default.
+            url: Complete URL for the request
+            method: HTTP method to use (GET, POST, PUT, etc.)
+            data: Request payload data
+            timeout_seconds: Request timeout in seconds. If None, uses config default
 
         Returns:
             Response: The HTTP response from the service.

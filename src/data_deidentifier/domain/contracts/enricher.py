@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 from src.data_deidentifier.domain.types.entity import Entity
 
 
-class EntityEnricherContract(ABC):
-    """Contract for entity enrichment services.
+class PseudonymEnricherContract(ABC):
+    """Contract for pseudonym enrichment services.
 
     Defines the interface for services that provide additional contextual information
     for detected PII entities that enhance the output while maintaining privacy.
@@ -25,7 +25,7 @@ class EntityEnricherContract(ABC):
             str | None: Enrichment information as a string if available.
 
         Raises:
-            EntityEnrichmentError: If an error while enriching occurs.
+            PseudonymEnrichmentError: If an error while enriching occurs.
 
         Examples:
             >>> entity = Entity(text="London", type="LOCATION", ...)

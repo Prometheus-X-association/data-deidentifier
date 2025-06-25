@@ -5,7 +5,7 @@ from logger import LoggerContract
 
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
 from src.data_deidentifier.adapters.infrastructure.enrichment.http_service import (
-    HttpEntityEnricher,
+    HttpPseudonymEnricher,
 )
 from src.data_deidentifier.adapters.presidio.anonymizer.structured import (
     PresidioStructuredDataAnonymizer,
@@ -26,7 +26,7 @@ from src.data_deidentifier.domain.contracts.anonymizer.structured import (
 from src.data_deidentifier.domain.contracts.anonymizer.text import (
     TextAnonymizerContract,
 )
-from src.data_deidentifier.domain.contracts.enricher import EntityEnricherContract
+from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
 from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
     StructuredDataPseudonymizerContract,
 )
@@ -120,18 +120,18 @@ async def get_structured_anonymizer(
     )
 
 
-async def get_entity_enricher(
+async def get_pseudonym_enricher(
     config: Annotated[ConfigContract, Depends(get_config)],
     logger: Annotated[LoggerContract, Depends(get_logger)],
-) -> EntityEnricherContract | None:
-    """Create and return an entity enricher instance.
+) -> PseudonymEnricherContract | None:
+    """Create and return a pseudonym enricher instance.
 
     Args:
-        config: The application configuration containing enrichment settings.
+        config: The application configuration containing enrichment settings
         logger: The logger instance
 
     Returns:
-        An implementation of the entity enricher contract.
+        An implementation of the pseudonym enricher contract.
     """
     if not config.get_enrichment_enabled():
         logger.info("Entity enrichment disabled")
@@ -142,7 +142,7 @@ async def get_entity_enricher(
         logger.warning("Entity enrichment enabled but no URL mappings configured")
         return None
 
-    return HttpEntityEnricher(
+    return HttpPseudonymEnricher(
         config=config,
         logger=logger,
     )
@@ -155,7 +155,7 @@ async def get_text_pseudonymizer(
     """Create and return a text pseudonymizer instance.
 
     Args:
-        config: The application configuration.
+        config: The application configuration
         logger: The logger instance
 
     Returns:
@@ -174,7 +174,7 @@ async def get_structured_pseudonymizer(
     """Create and return a structured data pseudonymizer instance.
 
     Args:
-        config: The application configuration.
+        config: The application configuration
         logger: The logger instance
 
     Returns:
@@ -198,8 +198,8 @@ async def get_text_anonymization_service(
     appropriate anonymizer implementation.
 
     Args:
-        anonymizer: The text anonymizer implementation to use for processing.
-        validator: The entity type validator for validating input parameters.
+        anonymizer: The text anonymizer implementation to use for processing
+        validator: The entity type validator for validating input parameters
 
     Returns:
         TextAnonymizationService: A configured service instance ready to
@@ -225,8 +225,8 @@ async def get_structured_data_anonymization_service(
     anonymization process for structured data formats like JSON and DataFrames.
 
     Args:
-        anonymizer: The structured data anonymizer implementation to use for processing.
-        validator: The entity type validator for validating input parameters.
+        anonymizer: The structured data anonymizer implementation to use for processing
+        validator: The entity type validator for validating input parameters
 
     Returns:
         StructuredDataAnonymizationService: A configured service instance ready to
@@ -245,24 +245,24 @@ async def get_text_pseudonymization_service(
     ],
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     logger: Annotated[LoggerContract, Depends(get_logger)],
-    entity_enricher: Annotated[
-        EntityEnricherContract | None,
-        Depends(get_entity_enricher),
+    pseudonym_enricher: Annotated[
+        PseudonymEnricherContract | None,
+        Depends(get_pseudonym_enricher),
     ],
 ) -> TextPseudonymizationService:
     """Create and return a text pseudonymization service instance.
 
     This dependency factory creates a fully configured text pseudonymization service
     with all necessary dependencies injected. The service orchestrates the text
-    pseudonymization process, including optional entity enrichment for enhanced
+    pseudonymization process, including optional pseudonym enrichment for enhanced
     utility while maintaining privacy.
 
     Args:
-        pseudonymizer: The text pseudonymizer implementation to use for processing.
-        validator: The entity type validator for validating input parameters.
-        logger: The logger instance for recording service operations.
-        entity_enricher: Optional entity enricher for adding contextual information
-            to pseudonymized entities.
+        pseudonymizer: The text pseudonymizer implementation to use for processing
+        validator: The entity type validator for validating input parameters
+        logger: The logger instance for recording service operations
+        pseudonym_enricher: Optional pseudonym enricher
+            for adding contextual information to pseudonymized entities
 
     Returns:
         TextPseudonymizationService: A configured service instance ready to
@@ -272,7 +272,7 @@ async def get_text_pseudonymization_service(
         pseudonymizer=pseudonymizer,
         validator=validator,
         logger=logger,
-        entity_enricher=entity_enricher,
+        pseudonym_enricher=pseudonym_enricher,
     )
 
 
@@ -283,9 +283,9 @@ async def get_structured_data_pseudonymization_service(
     ],
     validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     logger: Annotated[LoggerContract, Depends(get_logger)],
-    entity_enricher: Annotated[
-        EntityEnricherContract | None,
-        Depends(get_entity_enricher),
+    pseudonym_enricher: Annotated[
+        PseudonymEnricherContract | None,
+        Depends(get_pseudonym_enricher),
     ],
 ) -> StructuredDataPseudonymizationService:
     """Create and return a structured data pseudonymization service instance.
@@ -296,11 +296,11 @@ async def get_structured_data_pseudonymization_service(
     enrichment capabilities.
 
     Args:
-        pseudonymizer: The data pseudonymizer implementation to use for processing.
-        validator: The entity type validator for validating input parameters.
-        logger: The logger instance for recording service operations.
-        entity_enricher: Optional entity enricher for adding contextual information
-            to pseudonymized entities.
+        pseudonymizer: The data pseudonymizer implementation to use for processing
+        validator: The entity type validator for validating input parameters
+        logger: The logger instance for recording service operations
+        pseudonym_enricher: Optional entity enricher for adding contextual information
+            to pseudonymized entities
 
     Returns:
         StructuredDataPseudonymizationService: A configured service instance ready to
@@ -310,5 +310,5 @@ async def get_structured_data_pseudonymization_service(
         pseudonymizer=pseudonymizer,
         validator=validator,
         logger=logger,
-        entity_enricher=entity_enricher,
+        pseudonym_enricher=pseudonym_enricher,
     )

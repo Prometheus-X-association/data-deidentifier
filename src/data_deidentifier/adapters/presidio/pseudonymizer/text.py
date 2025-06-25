@@ -6,7 +6,7 @@ from src.data_deidentifier.adapters.infrastructure.config.contract import Config
 from src.data_deidentifier.adapters.presidio.anonymizer.text import (
     PresidioTextAnonymizer,
 )
-from src.data_deidentifier.domain.contracts.enricher import EntityEnricherContract
+from src.data_deidentifier.domain.contracts.enricher import PseudonymEnricherContract
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -34,7 +34,7 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
         """Initialize the Presidio text pseudonymizer.
 
         Args:
-            config: Configuration contract.
+            config: Configuration contract
             logger: Logger for logging events
         """
         self.config = config
@@ -52,7 +52,7 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
         language: str,
         min_score: float,
         entity_types: list[str] | None = None,
-        entity_enricher: EntityEnricherContract | None = None,
+        pseudonym_enricher: PseudonymEnricherContract | None = None,
     ) -> TextPseudonymizationResult:
         logger_context = {
             "method": type(method).__name__,
@@ -63,13 +63,13 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
             PseudonymizeOperator.PARAM_METHOD: method,
         }
 
-        if entity_enricher:
+        if pseudonym_enricher:
             url_mappings = self.config.get_enrichment_url_mappings()
             enrichable_types = set(url_mappings.keys())
             if enrichable_types:
                 operator_params.update(
                     {
-                        PseudonymizeOperator.PARAM_ENRICHER: entity_enricher,
+                        PseudonymizeOperator.PARAM_ENRICHER: pseudonym_enricher,
                         PseudonymizeOperator.PARAM_ENRICHABLE_TYPES: enrichable_types,
                     },
                 )
