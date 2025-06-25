@@ -28,6 +28,8 @@ class BaseHttpClient:
     exponential backoff, and comprehensive logging.
     """
 
+    DEFAULT_TIMEOUT = 10
+
     def __init__(self, logger: LoggerContract) -> None:
         """Initialize the HTTP client.
 
@@ -47,7 +49,7 @@ class BaseHttpClient:
         url: str,
         method: str,
         data: dict[str, Any],
-        timeout_seconds: int = 30,
+        timeout_seconds: int = DEFAULT_TIMEOUT,
     ) -> Response:
         """Make an HTTP request with retry logic.
 

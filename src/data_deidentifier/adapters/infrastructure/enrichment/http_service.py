@@ -31,7 +31,10 @@ class HttpPseudonymEnricher(PseudonymEnricherContract):
 
     @override
     def get_enrichment(self, entity: Entity) -> str | None:
-        if self.PARAM_URL not in self.params:
+        if self.PARAM_URL not in self.params or not isinstance(
+            self.params.get(self.PARAM_URL),
+            str,
+        ):
             return None
         url = self.params.get(self.PARAM_URL)
         entity_text = entity.text
@@ -42,12 +45,17 @@ class HttpPseudonymEnricher(PseudonymEnricherContract):
         }
         self.logger.debug("Starting pseudonym enrichment via HTTP", logger_context)
 
+        timeout = self.params.get(self.PARAM_TIMEOUT, BaseHttpClient.DEFAULT_TIMEOUT)
+        if not isinstance(timeout, int):
+            timeout = BaseHttpClient.DEFAULT_TIMEOUT
+        timeout = max(1, min(timeout, 300))
+
         try:
             response = self.http_client.request(
                 url=url,
                 method="POST",
                 data={"text": entity_text},
-                timeout_seconds=self.params.get(self.PARAM_TIMEOUT),
+                timeout_seconds=timeout,
             )
 
             data = response.json()
