@@ -9,7 +9,7 @@ from presidio_structured.data.data_processors import (
     JsonDataProcessor,
 )
 
-from src.data_deidentifier.domain.exceptions import InvalidInputDataError
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 
 from .structured_type import StructuredTypeAnalyzer
 
@@ -26,10 +26,7 @@ class JsonAnalyzer(StructuredTypeAnalyzer):
         return isinstance(data, dict)
 
     @override
-    def analyze(self, data: Any, language: str) -> StructuredAnalysis:
-        if not self.can_handle(data=data):
-            raise InvalidInputDataError("Data must be a dict")
-
+    def analyze(self, data: Any, language: SupportedLanguage) -> StructuredAnalysis:
         self.logger.debug("Analyzing JSON data", {"nb_keys": len(data)})
 
         analyzer = JsonAnalysisBuilder()

@@ -6,6 +6,7 @@ from src.data_deidentifier.domain.contracts.enricher.manager import (
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.text_pseudonymization_result import (
     TextPseudonymizationResult,
 )
@@ -19,7 +20,7 @@ class TextPseudonymizerContract(ABC):
         self,
         text: str,
         method: PseudonymizationMethodContract,
-        language: str,
+        language: SupportedLanguage,
         min_score: float,
         entity_types: list[str] | None = None,
         pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,

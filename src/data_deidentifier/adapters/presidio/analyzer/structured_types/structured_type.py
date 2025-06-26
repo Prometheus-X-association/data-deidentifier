@@ -4,6 +4,7 @@ from logger import LoggerContract
 from presidio_structured import StructuredAnalysis
 from presidio_structured.data.data_processors import DataProcessorBase
 
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.structured_data import StructuredData
 
 
@@ -36,7 +37,11 @@ class StructuredTypeAnalyzer(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def analyze(self, data: StructuredData, language: str) -> StructuredAnalysis:
+    def analyze(
+        self,
+        data: StructuredData,
+        language: SupportedLanguage,
+    ) -> StructuredAnalysis:
         """Analyze structured data to detect PII entities.
 
         Args:

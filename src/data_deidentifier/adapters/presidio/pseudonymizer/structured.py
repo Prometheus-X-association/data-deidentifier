@@ -22,6 +22,7 @@ from src.data_deidentifier.domain.exceptions import (
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.structured_data import StructuredData
 from src.data_deidentifier.domain.types.structured_pseudonymization_result import (
     StructuredDataPseudonymizationResult,
@@ -52,7 +53,7 @@ class PresidioStructuredDataPseudonymizer(StructuredDataPseudonymizerContract):
         self,
         data: StructuredData,
         method: PseudonymizationMethodContract,
-        language: str,
+        language: SupportedLanguage,
         entity_types: list[str] | None = None,
         pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,
     ) -> StructuredDataPseudonymizationResult:

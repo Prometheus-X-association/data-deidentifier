@@ -6,6 +6,7 @@ from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactor
 from src.data_deidentifier.adapters.presidio.exceptions import (
     StructuredDataAnalysisError,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.structured_data import StructuredData
 
 
@@ -34,7 +35,7 @@ class PresidioStructuredDataAnalyzer:
     def analyze(
         self,
         data: StructuredData,
-        language: str,
+        language: SupportedLanguage,
         entity_types: list[str] | None = None,
     ) -> tuple[StructuredAnalysis, DataProcessorBase]:
         """Analyze structured data to detect PII entities.

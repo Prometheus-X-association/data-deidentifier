@@ -16,6 +16,7 @@ from src.data_deidentifier.domain.exceptions import (
 from src.data_deidentifier.domain.services.pseudonymization.methods.factory import (
     PseudonymizationMethodFactory,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.pseudonymization_method import (
     PseudonymizationMethod,
 )
@@ -57,7 +58,7 @@ class StructuredDataPseudonymizationService:
         self,
         data: StructuredData,
         method: PseudonymizationMethod,
-        language: str,
+        language: SupportedLanguage,
         entity_types: list[str],
         method_params: dict[str, Any] | None = None,
     ) -> StructuredDataPseudonymizationResult:

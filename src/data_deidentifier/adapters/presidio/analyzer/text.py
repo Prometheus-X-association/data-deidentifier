@@ -3,6 +3,7 @@ from presidio_analyzer import RecognizerResult
 
 from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactory
 from src.data_deidentifier.adapters.presidio.exceptions import TextAnalysisError
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 
 
 class PresidioTextAnalyzer:
@@ -16,14 +17,14 @@ class PresidioTextAnalyzer:
         """
         self.logger = logger
 
-        self.presidio_analyzer = PresidioEngineFactory.get_text_analyzer_engine()
+        self.presidio_analyzer = PresidioEngineFactory.get_analyzer_engine()
 
         self.logger.debug("Presidio Analyzer initialized successfully")
 
     def analyze(
         self,
         text: str,
-        language: str,
+        language: SupportedLanguage,
         min_score: float,
         entity_types: list[str] | None = None,
     ) -> list[RecognizerResult]:
