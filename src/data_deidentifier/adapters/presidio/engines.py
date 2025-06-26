@@ -28,26 +28,26 @@ class PresidioEngineFactory:
     """
 
     _lock: ClassVar[threading.Lock] = threading.Lock()
-    _text_analyzer_engine: ClassVar[AnalyzerEngine | None] = None
+    _analyzer_engine: ClassVar[AnalyzerEngine | None] = None
     _text_anonymizer_engine: ClassVar[AnonymizerEngine | None] = None
     _structured_data_factory: ClassVar[StructuredDataAnalyzerFactory | None] = None
     _structured_data_engines: ClassVar[dict[str, StructuredEngine]] = {}
 
     @classmethod
-    def get_text_analyzer_engine(cls) -> AnalyzerEngine:
-        """Get a shared instance of the text analyzer engine (thread-safe).
+    def get_analyzer_engine(cls) -> AnalyzerEngine:
+        """Get a shared instance of the analyzer engine (thread-safe).
 
         Lazily initializes the `AnalyzerEngine` if not already created
         and returns the same instance for subsequent calls.
 
         Returns:
-            AnalyzerEngine: The shared text analyzer engine.
+            AnalyzerEngine: The shared analyzer engine.
         """
-        if cls._text_analyzer_engine is None:
+        if cls._analyzer_engine is None:
             with cls._lock:
-                if cls._text_analyzer_engine is None:
-                    cls._text_analyzer_engine = AnalyzerEngine()
-        return cls._text_analyzer_engine
+                if cls._analyzer_engine is None:
+                    cls._analyzer_engine = AnalyzerEngine()
+        return cls._analyzer_engine
 
     @classmethod
     def get_text_anonymizer_engine(cls) -> AnonymizerEngine:

@@ -6,6 +6,7 @@ from pydantic import BeforeValidator, Field
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 
 from .contract import ConfigContract
 
@@ -13,7 +14,10 @@ from .contract import ConfigContract
 class Settings(CoreSettings, ConfigContract):
     """Application settings loaded from environment variables, via Pydantic model."""
 
-    default_language: str = Field(default="en")
+    default_language: Annotated[
+        SupportedLanguage,
+        BeforeValidator(lambda v: v.lower() if isinstance(v, str) else v),
+    ] = Field(default=SupportedLanguage.ENGLISH)
 
     default_minimum_score: float = Field(default=0.5, ge=0.0, le=1.0)
 
@@ -29,7 +33,7 @@ class Settings(CoreSettings, ConfigContract):
     )
 
     @override
-    def get_default_language(self) -> str:
+    def get_default_language(self) -> SupportedLanguage:
         return self.default_language
 
     @override
