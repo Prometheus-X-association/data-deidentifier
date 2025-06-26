@@ -18,6 +18,7 @@ from src.data_deidentifier.domain.exceptions import (
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.text_pseudonymization_result import (
     TextPseudonymizationResult,
 )
@@ -45,7 +46,7 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
         self,
         text: str,
         method: PseudonymizationMethodContract,
-        language: str,
+        language: SupportedLanguage,
         min_score: float,
         entity_types: list[str] | None = None,
     ) -> TextPseudonymizationResult:
