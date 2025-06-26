@@ -31,18 +31,6 @@ class StructuredDataAnalyzerFactory:
             DataFrameAnalyzer(logger=self.logger),
         ]
 
-    def register_analyzer(self, analyzer: StructuredTypeAnalyzer) -> None:
-        """Register a new analyzer.
-
-        Args:
-            analyzer: The analyzer instance to register.
-        """
-        self.analyzers.append(analyzer)
-        self.logger.debug(
-            "Registered analyzer",
-            {"analyzer": analyzer.__class__.__name__},
-        )
-
     def get_analyzer(self, data: StructuredData) -> StructuredTypeAnalyzer:
         """Get the appropriate analyzer for the data type.
 

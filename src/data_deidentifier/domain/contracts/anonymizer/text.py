@@ -4,6 +4,7 @@ from typing import Any
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.text_anonymization_result import (
     TextAnonymizationResult,
 )
@@ -17,7 +18,7 @@ class TextAnonymizerContract(ABC):
         self,
         text: str,
         operator: AnonymizationOperator,
-        language: str,
+        language: SupportedLanguage,
         min_score: float,
         entity_types: list[str] | None = None,
         operator_params: dict[str, Any] | None = None,

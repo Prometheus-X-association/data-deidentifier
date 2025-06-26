@@ -18,6 +18,7 @@ from src.data_deidentifier.domain.exceptions import StructuredDataAnonymizationE
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 from src.data_deidentifier.domain.types.structured_anonymization_result import (
     StructuredDataAnonymizationResult,
 )
@@ -44,7 +45,7 @@ class PresidioStructuredDataAnonymizer(StructuredDataAnonymizerContract):
         self,
         data: StructuredData,
         operator: AnonymizationOperator,
-        language: str,
+        language: SupportedLanguage,
         entity_types: list[str] | None = None,
         operator_params: dict[str, Any] | None = None,
     ) -> StructuredDataAnonymizationResult:

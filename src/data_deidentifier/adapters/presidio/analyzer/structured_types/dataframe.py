@@ -10,7 +10,7 @@ from presidio_structured.data.data_processors import (
     PandasDataProcessor,
 )
 
-from src.data_deidentifier.domain.exceptions import InvalidInputDataError
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 
 from .structured_type import StructuredTypeAnalyzer
 
@@ -30,11 +30,8 @@ class DataFrameAnalyzer(StructuredTypeAnalyzer):
     def analyze(
         self,
         data: Any,
-        language: str,
+        language: SupportedLanguage,
     ) -> StructuredAnalysis:
-        if not self.can_handle(data=data):
-            raise InvalidInputDataError("Data must be a Pandas dataframe")
-
         self.logger.debug("Analyzing DataFrame", {"nb_rows": len(data)})
 
         analyzer = PandasAnalysisBuilder()

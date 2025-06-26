@@ -16,7 +16,7 @@ class PresidioValidator(EntityTypeValidatorContract):
         """
         self.logger = logger
 
-        self.analyzer_engine = PresidioEngineFactory.get_text_analyzer_engine()
+        self.analyzer_engine = PresidioEngineFactory.get_analyzer_engine()
         self._supported_entities = None  # Lazy loading
 
     @property
