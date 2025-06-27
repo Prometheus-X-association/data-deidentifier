@@ -78,17 +78,15 @@ class PresidioStructuredDataAnonymizer(StructuredDataAnonymizerContract):
             processor=data_processor,
         )
 
-        entity_types = {field.entity_type for field in fields}
-
         # Create entity-specific OperatorConfig instead of single DEFAULT config
         # Required because structured data processing doesn't auto-inject entity_type
         # into params (unlike text anonymization), but our PseudonymizeOperator needs it
         operators = {
-            entity_type: OperatorConfig(
+            field.entity_type: OperatorConfig(
                 operator_name=operator,
-                params={**operator_params, "entity_type": entity_type},
+                params={**operator_params, "entity_type": field.entity_type},
             )
-            for entity_type in entity_types
+            for field in fields
         }
 
         try:
