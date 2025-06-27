@@ -1,28 +1,30 @@
 from logger import LoggerContract
-from presidio_analyzer import AnalyzerEngine, RecognizerResult
+from presidio_analyzer import RecognizerResult
 
-from src.data_deidentifier.adapters.presidio.exceptions import AnalyzeError
+from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactory
+from src.data_deidentifier.adapters.presidio.exceptions import TextAnalysisError
+from src.data_deidentifier.domain.types.language import SupportedLanguage
 
 
-class PresidioAnalyzer:
+class PresidioTextAnalyzer:
     """Uses the Presidio Analyzer to detect PII entities in text."""
 
     def __init__(self, logger: LoggerContract) -> None:
-        """Initialize the Presidio analyzer.
+        """Initialize the Presidio text analyzer.
 
         Args:
             logger: Logger for logging events
         """
         self.logger = logger
 
-        self.presidio_analyzer = AnalyzerEngine()
+        self.presidio_analyzer = PresidioEngineFactory.get_analyzer_engine()
 
         self.logger.debug("Presidio Analyzer initialized successfully")
 
-    def analyze_text(
+    def analyze(
         self,
         text: str,
-        language: str,
+        language: SupportedLanguage,
         min_score: float,
         entity_types: list[str] | None = None,
     ) -> list[RecognizerResult]:
@@ -38,7 +40,7 @@ class PresidioAnalyzer:
             List of detected entities
 
         Raises:
-            AnalyzeError: If analysis fails
+            TextAnalysisError: If analysis fails
         """
         language = language.lower()
 
@@ -60,12 +62,8 @@ class PresidioAnalyzer:
             )
         except Exception as e:
             msg = "Unexpected error during entity recognition"
-            self.logger.exception(
-                "Unexpected error during entity recognition",
-                e,
-                logger_context,
-            )
-            raise AnalyzeError(msg) from e
+            self.logger.exception(msg, e, logger_context)
+            raise TextAnalysisError(msg) from e
 
         self.logger.info(
             "Analysis completed successfully",

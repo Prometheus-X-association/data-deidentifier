@@ -1,0 +1,101 @@
+from typing import Any
+
+from logger import LoggerContract
+
+from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
+    StructuredDataPseudonymizerContract,
+)
+from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
+from src.data_deidentifier.domain.exceptions import (
+    InvalidInputDataError,
+    StructuredDataPseudonymizationError,
+)
+from src.data_deidentifier.domain.services.pseudonymization.methods.factory import (
+    PseudonymizationMethodFactory,
+)
+from src.data_deidentifier.domain.types.language import SupportedLanguage
+from src.data_deidentifier.domain.types.pseudonymization_method import (
+    PseudonymizationMethod,
+)
+from src.data_deidentifier.domain.types.structured_data import StructuredData
+from src.data_deidentifier.domain.types.structured_pseudonymization_result import (
+    StructuredDataPseudonymizationResult,
+)
+
+
+class StructuredDataPseudonymizationService:
+    """Service for pseudonymizing personally identifiable information in data.
+
+    This service orchestrates the structured data pseudonymization process
+    and produces structured pseudonymization results.
+    """
+
+    def __init__(
+        self,
+        pseudonymizer: StructuredDataPseudonymizerContract,
+        validator: EntityTypeValidatorContract,
+        logger: LoggerContract,
+    ) -> None:
+        """Initialize the structured data pseudonymization service.
+
+        Args:
+            pseudonymizer: Implementation of the data pseudonymization contract
+            validator: Implementation of the validator contract
+            logger: Logger for logging events
+        """
+        self.pseudonymizer = pseudonymizer
+        self.validator = validator
+        self.logger = logger
+
+    def pseudonymize(
+        self,
+        data: StructuredData,
+        method: PseudonymizationMethod,
+        language: SupportedLanguage,
+        entity_types: list[str],
+        method_params: dict[str, Any] | None = None,
+    ) -> StructuredDataPseudonymizationResult:
+        """Pseudonymize PII entities in text.
+
+        Args:
+            data: The structured data to pseudonymize
+            method: Pseudonymization method to use
+            language: Language code of the text
+            entity_types: Entity types to detect
+            method_params: Optional parameters for the method
+
+        Returns:
+            A StructuredDataPseudonymizationResult
+            containing the pseudonymized data and metadata
+
+        Raises:
+            InvalidInputDataError: If the text is empty
+            StructuredDataPseudonymizationError: If the method is unknown
+        """
+        if not data:
+            raise InvalidInputDataError("Data cannot be empty")
+
+        # Get the pseudonymization method
+        try:
+            method_instance = PseudonymizationMethodFactory.create(
+                method=method,
+                method_params=method_params or {},
+                logger=self.logger,
+            )
+        except Exception as e:
+            raise StructuredDataPseudonymizationError(
+                "Pseudonymization method loading failed",
+            ) from e
+
+        # Validate data
+        effective_entity_types = self.validator.validate_entity_types(
+            entity_types=entity_types,
+        )
+
+        # Pseudonymize the text
+        return self.pseudonymizer.pseudonymize(
+            data=data,
+            method=method_instance,
+            entity_types=effective_entity_types,
+            language=language,
+        )

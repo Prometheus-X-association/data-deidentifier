@@ -2,30 +2,30 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.data_deidentifier.domain.types.anonymization_operator import (
-    AnonymizationOperator,
-)
 from src.data_deidentifier.domain.types.entity import Entity
 from src.data_deidentifier.domain.types.language import SupportedLanguage
+from src.data_deidentifier.domain.types.pseudonymization_method import (
+    PseudonymizationMethod,
+)
 from src.data_deidentifier.domain.types.structured_data import StructuredData
 
 
-class AnonymizeTextRequest(BaseModel):
-    """Request model for anonymizing text.
+class PseudonymizeTextRequest(BaseModel):
+    """Request model for pseudonymizing text.
 
-    This model defines the input parameters for the text anonymization endpoint.
+    This model defines the input parameters for the text pseudonymization endpoint.
     """
 
-    text: str = Field(..., description="The text content to anonymize")
+    text: str = Field(..., description="The text content to pseudonymize")
 
-    operator: AnonymizationOperator | None = Field(
+    method: PseudonymizationMethod | None = Field(
         default=None,
-        description="Anonymization method",
+        description="Pseudonymization method",
     )
 
-    operator_params: dict[str, Any] | None = Field(
+    method_params: dict[str, Any] | None = Field(
         default=None,
-        description="Anonymization operator parameters",
+        description="Pseudonymization method parameters",
     )
 
     language: SupportedLanguage | None = Field(
@@ -46,14 +46,14 @@ class AnonymizeTextRequest(BaseModel):
     )
 
 
-class AnonymizeTextResponse(BaseModel):
-    """Response model for text anonymization.
+class PseudonymizeTextResponse(BaseModel):
+    """Response model for text pseudonymization.
 
     This model defines the structure of the response
-    returned by the text anonymization endpoint.
+    returned by the text pseudonymization endpoint.
     """
 
-    anonymized_text: str = Field(..., description="The anonymized text content")
+    pseudonymized_text: str = Field(..., description="The pseudonymized text content")
 
     detected_entities: list[Entity] = Field(
         ...,
@@ -62,27 +62,27 @@ class AnonymizeTextResponse(BaseModel):
 
     meta: dict[str, Any] | None = Field(
         default_factory=dict,
-        description="Statistics about the anonymization operation",
+        description="Statistics about the pseudonymization operation",
     )
 
 
-class AnonymizeStructuredDataRequest(BaseModel):
-    """Request model for anonymizing structured data.
+class PseudonymizeStructuredDataRequest(BaseModel):
+    """Request model for pseudonymizing structured data.
 
     This model defines the input parameters
-    for the structured data anonymization endpoint.
+    for the structured data pseudonymization endpoint.
     """
 
-    data: StructuredData = Field(..., description="The structured data to anonymize")
+    data: StructuredData = Field(..., description="The structured data to pseudonymize")
 
-    operator: AnonymizationOperator | None = Field(
+    method: PseudonymizationMethod | None = Field(
         default=None,
-        description="Anonymization method",
+        description="Pseudonymization method",
     )
 
-    operator_params: dict[str, Any] | None = Field(
+    method_params: dict[str, Any] | None = Field(
         default=None,
-        description="Anonymization operator parameters",
+        description="Pseudonymization method parameters",
     )
 
     language: SupportedLanguage | None = Field(
@@ -96,16 +96,16 @@ class AnonymizeStructuredDataRequest(BaseModel):
     )
 
 
-class AnonymizeStructuredDataResponse(BaseModel):
-    """Response model for structured data anonymization.
+class PseudonymizeStructuredDataResponse(BaseModel):
+    """Response model for structured data pseudonymization.
 
     This model defines the structure of the response returned
-    by the structured data anonymization endpoint.
+    by the structured data pseudonymization endpoint.
     """
 
-    anonymized_data: StructuredData = Field(
+    pseudonymized_data: StructuredData = Field(
         ...,
-        description="The anonymized structured data",
+        description="The pseudonymized structured data",
     )
 
     detected_fields: dict[str, str] = Field(
@@ -115,5 +115,5 @@ class AnonymizeStructuredDataResponse(BaseModel):
 
     meta: dict[str, Any] | None = Field(
         default_factory=dict,
-        description="Statistics about the anonymization operation",
+        description="Statistics about the pseudonymization operation",
     )

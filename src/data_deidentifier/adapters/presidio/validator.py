@@ -1,6 +1,6 @@
 from logger import LoggerContract
-from presidio_analyzer import AnalyzerEngine
 
+from src.data_deidentifier.adapters.presidio.engines import PresidioEngineFactory
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 from src.data_deidentifier.domain.exceptions import EntityTypeValidationError
 
@@ -16,7 +16,7 @@ class PresidioValidator(EntityTypeValidatorContract):
         """
         self.logger = logger
 
-        self.analyzer_engine = AnalyzerEngine()
+        self.analyzer_engine = PresidioEngineFactory.get_analyzer_engine()
         self._supported_entities = None  # Lazy loading
 
     @property
@@ -42,7 +42,7 @@ class PresidioValidator(EntityTypeValidatorContract):
             List of validated and normalized entity types
 
         Raises:
-            ValueError: If any entity type is not supported
+            EntityTypeValidationError: If any entity type is not supported
         """
         if not entity_types:
             return []

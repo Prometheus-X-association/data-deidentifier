@@ -4,7 +4,7 @@ from .entity import Entity
 
 
 @dataclass
-class AnonymizationResult:
+class TextAnonymizationResult:
     """Result of a text anonymization operation.
 
     This class encapsulates all information about an anonymization operation.
