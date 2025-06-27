@@ -5,13 +5,17 @@ from configcore import ConfigContract as CoreConfigContract
 from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
+from src.data_deidentifier.domain.types.language import SupportedLanguage
+from src.data_deidentifier.domain.types.pseudonymization_method import (
+    PseudonymizationMethod,
+)
 
 
 class ConfigContract(CoreConfigContract):
     """Contract for application configuration."""
 
     @abstractmethod
-    def get_default_language(self) -> str:
+    def get_default_language(self) -> SupportedLanguage:
         """Get the default language for text analysis.
 
         Returns:
@@ -45,3 +49,11 @@ class ConfigContract(CoreConfigContract):
             The default anonymization operator
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def get_default_pseudonymization_method(self) -> PseudonymizationMethod:
+        """Get the default pseudonymization method.
+
+        Returns:
+            The default pseudonymization method
+        """

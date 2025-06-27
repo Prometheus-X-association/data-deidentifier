@@ -4,11 +4,31 @@ from fastapi import Depends, Request
 from logger import LoggerContract
 
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.adapters.presidio.anonymizer.anonymizer import (
-    PresidioAnonymizer,
+from src.data_deidentifier.adapters.presidio.anonymizer.structured import (
+    PresidioStructuredDataAnonymizer,
+)
+from src.data_deidentifier.adapters.presidio.anonymizer.text import (
+    PresidioTextAnonymizer,
+)
+from src.data_deidentifier.adapters.presidio.pseudonymizer.structured import (
+    PresidioStructuredDataPseudonymizer,
+)
+from src.data_deidentifier.adapters.presidio.pseudonymizer.text import (
+    PresidioTextPseudonymizer,
 )
 from src.data_deidentifier.adapters.presidio.validator import PresidioValidator
-from src.data_deidentifier.domain.contracts.anonymizer import AnonymizerContract
+from src.data_deidentifier.domain.contracts.anonymizer.structured import (
+    StructuredDataAnonymizerContract,
+)
+from src.data_deidentifier.domain.contracts.anonymizer.text import (
+    TextAnonymizerContract,
+)
+from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
+    StructuredDataPseudonymizerContract,
+)
+from src.data_deidentifier.domain.contracts.pseudonymizer.text import (
+    TextPseudonymizerContract,
+)
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 
 
@@ -36,18 +56,18 @@ async def get_logger(request: Request) -> LoggerContract:
     return request.state.logger
 
 
-async def get_anonymizer(
+async def get_text_anonymizer(
     logger: Annotated[LoggerContract, Depends(get_logger)],
-) -> AnonymizerContract:
-    """Create and return an anonymizer instance.
+) -> TextAnonymizerContract:
+    """Create and return a text anonymizer instance.
 
     Args:
         logger: The logger instance
 
     Returns:
-        An implementation of the anonymizer contract
+        An implementation of the text anonymizer contract
     """
-    return PresidioAnonymizer(
+    return PresidioTextAnonymizer(
         logger=logger,
     )
 
@@ -64,5 +84,53 @@ async def get_validator(
         An implementation of the entity type validator contract
     """
     return PresidioValidator(
+        logger=logger,
+    )
+
+
+async def get_structured_anonymizer(
+    logger: Annotated[LoggerContract, Depends(get_logger)],
+) -> StructuredDataAnonymizerContract:
+    """Create and return a structured data anonymizer instance.
+
+    Args:
+        logger: The logger instance obtained via dependency injection
+
+    Returns:
+        An implementation of the structured data anonymizer contract
+    """
+    return PresidioStructuredDataAnonymizer(
+        logger=logger,
+    )
+
+
+async def get_text_pseudonymizer(
+    logger: Annotated[LoggerContract, Depends(get_logger)],
+) -> TextPseudonymizerContract:
+    """Create and return a text pseudonymizer instance.
+
+    Args:
+        logger: The logger instance
+
+    Returns:
+        An implementation of the text pseudonymizer contract
+    """
+    return PresidioTextPseudonymizer(
+        logger=logger,
+    )
+
+
+async def get_structured_pseudonymizer(
+    logger: Annotated[LoggerContract, Depends(get_logger)],
+) -> StructuredDataPseudonymizerContract:
+    """Create and return a structured data pseudonymizer instance.
+
+    Args:
+        logger: The logger instance
+
+    Returns:
+        An implementation of the structured data pseudonymizer contract
+    """
+    return PresidioStructuredDataPseudonymizer(
         logger=logger,
     )

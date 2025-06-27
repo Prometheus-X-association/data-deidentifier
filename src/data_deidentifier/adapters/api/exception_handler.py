@@ -6,6 +6,10 @@ from src.data_deidentifier.domain.exceptions import (
     AnonymizationError,
     DataDeidentifierError,
     EntityTypeValidationError,
+    InvalidInputDataError,
+    InvalidInputTextError,
+    PseudonymizationError,
+    UnsupportedStructuredDataError,
 )
 
 
@@ -26,8 +30,12 @@ class ExceptionHandler:
             ValueError: status.HTTP_400_BAD_REQUEST,
             TypeError: status.HTTP_500_INTERNAL_SERVER_ERROR,
             AnonymizationError: status.HTTP_500_INTERNAL_SERVER_ERROR,
-            EntityTypeValidationError: status.HTTP_400_BAD_REQUEST,
             DataDeidentifierError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+            EntityTypeValidationError: status.HTTP_400_BAD_REQUEST,
+            InvalidInputDataError: status.HTTP_400_BAD_REQUEST,
+            InvalidInputTextError: status.HTTP_400_BAD_REQUEST,
+            PseudonymizationError: status.HTTP_500_INTERNAL_SERVER_ERROR,
+            UnsupportedStructuredDataError: status.HTTP_400_BAD_REQUEST,
         }
 
     def configure(self, app: FastAPI) -> None:
