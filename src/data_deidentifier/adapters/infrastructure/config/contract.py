@@ -6,6 +6,9 @@ from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
 from src.data_deidentifier.domain.types.language import SupportedLanguage
+from src.data_deidentifier.domain.types.pseudonymization_method import (
+    PseudonymizationMethod,
+)
 
 
 class ConfigContract(CoreConfigContract):
@@ -46,3 +49,11 @@ class ConfigContract(CoreConfigContract):
             The default anonymization operator
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def get_default_pseudonymization_method(self) -> PseudonymizationMethod:
+        """Get the default pseudonymization method.
+
+        Returns:
+            The default pseudonymization method
+        """

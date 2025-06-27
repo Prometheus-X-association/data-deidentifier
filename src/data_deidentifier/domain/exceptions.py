@@ -28,3 +28,15 @@ class InvalidInputDataError(StructuredDataAnonymizationError):
 
 class UnsupportedStructuredDataError(DataDeidentifierError):
     """Raised when the data type is not supported."""
+
+
+class PseudonymizationError(DataDeidentifierError):
+    """Base class for all pseudonymization-related exceptions."""
+
+
+class TextPseudonymizationError(PseudonymizationError):
+    """Raised when an error occurs during the text pseudonymization process."""
+
+
+class StructuredDataPseudonymizationError(AnonymizationError):
+    """Raised when an error occurs during the data pseudonymization process."""

@@ -10,12 +10,24 @@ from src.data_deidentifier.adapters.presidio.anonymizer.structured import (
 from src.data_deidentifier.adapters.presidio.anonymizer.text import (
     PresidioTextAnonymizer,
 )
+from src.data_deidentifier.adapters.presidio.pseudonymizer.structured import (
+    PresidioStructuredDataPseudonymizer,
+)
+from src.data_deidentifier.adapters.presidio.pseudonymizer.text import (
+    PresidioTextPseudonymizer,
+)
 from src.data_deidentifier.adapters.presidio.validator import PresidioValidator
 from src.data_deidentifier.domain.contracts.anonymizer.structured import (
     StructuredDataAnonymizerContract,
 )
 from src.data_deidentifier.domain.contracts.anonymizer.text import (
     TextAnonymizerContract,
+)
+from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
+    StructuredDataPseudonymizerContract,
+)
+from src.data_deidentifier.domain.contracts.pseudonymizer.text import (
+    TextPseudonymizerContract,
 )
 from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 
@@ -88,5 +100,37 @@ async def get_structured_anonymizer(
         An implementation of the structured data anonymizer contract
     """
     return PresidioStructuredDataAnonymizer(
+        logger=logger,
+    )
+
+
+async def get_text_pseudonymizer(
+    logger: Annotated[LoggerContract, Depends(get_logger)],
+) -> TextPseudonymizerContract:
+    """Create and return a text pseudonymizer instance.
+
+    Args:
+        logger: The logger instance
+
+    Returns:
+        An implementation of the text pseudonymizer contract
+    """
+    return PresidioTextPseudonymizer(
+        logger=logger,
+    )
+
+
+async def get_structured_pseudonymizer(
+    logger: Annotated[LoggerContract, Depends(get_logger)],
+) -> StructuredDataPseudonymizerContract:
+    """Create and return a structured data pseudonymizer instance.
+
+    Args:
+        logger: The logger instance
+
+    Returns:
+        An implementation of the structured data pseudonymizer contract
+    """
+    return PresidioStructuredDataPseudonymizer(
         logger=logger,
     )

@@ -7,6 +7,9 @@ from src.data_deidentifier.domain.types.anonymization_operator import (
     AnonymizationOperator,
 )
 from src.data_deidentifier.domain.types.language import SupportedLanguage
+from src.data_deidentifier.domain.types.pseudonymization_method import (
+    PseudonymizationMethod,
+)
 
 from .contract import ConfigContract
 
@@ -32,6 +35,15 @@ class Settings(CoreSettings, ConfigContract):
         default=AnonymizationOperator.REPLACE,
     )
 
+    default_pseudonymization_method: Annotated[
+        PseudonymizationMethod,
+        BeforeValidator(
+            lambda v: PseudonymizationMethod[v.upper()] if isinstance(v, str) else v,
+        ),
+    ] = Field(
+        default=PseudonymizationMethod.RANDOM_NUMBER,
+    )
+
     @override
     def get_default_language(self) -> SupportedLanguage:
         return self.default_language
@@ -47,3 +59,7 @@ class Settings(CoreSettings, ConfigContract):
     @override
     def get_default_anonymization_operator(self) -> AnonymizationOperator:
         return self.default_anonymization_operator
+
+    @override
+    def get_default_pseudonymization_method(self) -> PseudonymizationMethod:
+        return self.default_pseudonymization_method
