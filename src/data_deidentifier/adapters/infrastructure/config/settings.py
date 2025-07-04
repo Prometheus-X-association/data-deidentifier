@@ -45,7 +45,7 @@ class Settings(CoreSettings, ConfigContract):
     )
 
     # Config mappings for entity enrichment (JSON string format), example:
-    # '{"LOCATION": {"type": "http", "url": http://geo-service/enrich"}}' # noqa: ERA001
+    # {"LOCATION": {"type": "http", "url": "http://geo-service/enrich"}} # noqa: ERA001
     enrichment_configurations: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
     @override
