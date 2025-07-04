@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from presidio_anonymizer.operators import Operator, OperatorType
 
@@ -41,6 +41,7 @@ class PseudonymizeOperator(Operator):
     PARAM_ENRICHER: str = "enricher"
     PARAM_CONFIG: str = "config"
 
+    @override
     def operate(self, text: str, params: dict | None = None) -> str:
         """Generate a pseudonym for the entity, using a PseudonymizationMethodContract.
 
@@ -120,6 +121,7 @@ class PseudonymizeOperator(Operator):
             # If enrichment fails, return None
             return None
 
+    @override
     def validate(self, params: dict | None = None) -> None:
         """Validate operator parameters."""
         if not params:
@@ -134,10 +136,12 @@ class PseudonymizeOperator(Operator):
         if "entity_type" not in params:
             raise ValueError("A 'entity_type' parameter is required")
 
+    @override
     def operator_name(self) -> str:
         """Return operator name."""
         return AnonymizationOperator.PSEUDONYMIZE.value
 
+    @override
     def operator_type(self) -> OperatorType:
         """Return operator type."""
         return OperatorType.Anonymize

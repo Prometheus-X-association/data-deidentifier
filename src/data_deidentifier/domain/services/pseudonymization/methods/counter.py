@@ -59,11 +59,12 @@ class CounterPseudonymizationMethod(PseudonymizationMethodContract):
                 if cache_key in entity_mapping_for_type:
                     return entity_mapping_for_type.get(cache_key)
 
-        # Generate new pseudonym with current counter
-        current_count = self._counters.get(entity_type)
-        pseudonym = f"<{entity_type}_{current_count}>"
+            # Generate new pseudonym with current counter
+            current_count = self._counters.get(entity_type)
+            pseudonym = f"<{entity_type}_{current_count}>"
 
-        # Store in cache
-        self._mapping[entity_type][cache_key] = pseudonym
-        self._counters[entity_type] += 1
-        return pseudonym
+            # Store in cache
+            self._mapping[entity_type][cache_key] = pseudonym
+            self._counters[entity_type] += 1
+
+            return pseudonym
