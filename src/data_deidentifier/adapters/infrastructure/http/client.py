@@ -49,6 +49,7 @@ class BaseHttpClient:
         url: str,
         method: str,
         data: dict[str, Any],
+        headers: dict[str, str] | None = None,
         timeout_seconds: int = DEFAULT_TIMEOUT,
     ) -> Response:
         """Make an HTTP request with retry logic.
@@ -60,6 +61,7 @@ class BaseHttpClient:
             url: Complete URL for the request
             method: HTTP method to use (GET, POST, PUT, etc.)
             data: Request payload data
+            headers: Optional HTTP headers to include in the request
             timeout_seconds: Request timeout in seconds. If None, uses config default
 
         Returns:
@@ -87,6 +89,7 @@ class BaseHttpClient:
                     url=url,
                     json=data if method in ("POST", "PUT", "PATCH") else None,
                     params=data if method == "GET" else None,
+                    headers=headers,
                     timeout=timeout_seconds,
                 )
                 response.raise_for_status()
