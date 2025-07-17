@@ -50,7 +50,7 @@ colorama==0.4.6
 confection==0.1.5
     # via thinc
     # via weasel
-configcore @ git+https://github.com/inokufu/python-config@bc52273e03751041355d1597460cea5c90788d0f
+configcore @ git+https://github.com/inokufu/python-config@f151625df26699e96e97e4ecc2f85a6d32242ad9
     # via data-deidentifier
 coverage==7.9.2
     # via pytest-cov
@@ -107,7 +107,7 @@ langcodes==3.5.0
     # via spacy
 language-data==1.3.0
     # via langcodes
-logger @ git+https://github.com/inokufu/python-logger@f4cbb832a467f8f87258ff57b3676b38dfc4aaef
+logger @ git+https://github.com/inokufu/python-logger@075aad74bbdd1b28c7aded17034f1e05bd6be635
     # via data-deidentifier
 loguru==0.7.3
     # via logger
