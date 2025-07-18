@@ -12,14 +12,19 @@
 [![MkDocs](https://img.shields.io/badge/MkDocs-526CFE?logo=markdown)](https://www.mkdocs.org/)
 
 <!-- TOC -->
-
 * [Data deidentifier](#data-deidentifier)
   * [Overview](#overview)
     * [Key Features](#key-features)
     * [Supported Entity Types](#supported-entity-types)
     * [Available Methods and Operators](#available-methods-and-operators)
   * [Setup and installation](#setup-and-installation)
-    * [Prerequisites](#prerequisites)
+    * [With Docker](#with-docker)
+      * [Prerequisites](#prerequisites)
+      * [Development Environment](#development-environment)
+      * [Quick Start (Without volumes or Traefik)](#quick-start-without-volumes-or-traefik)
+      * [Production Environment](#production-environment)
+    * [With Rye](#with-rye)
+    * [Prerequisites](#prerequisites-1)
     * [Installation](#installation)
   * [Usage](#usage)
     * [Text Anonymization](#text-anonymization)
@@ -34,7 +39,6 @@
     * [Architecture](#architecture)
   * [Contributing](#contributing)
   * [License](#license)
-
 <!-- TOC -->
 
 ## Overview
