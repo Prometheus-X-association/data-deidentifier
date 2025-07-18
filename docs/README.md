@@ -48,7 +48,7 @@ with configurable operators and methods.
 - **Flexible Anonymization** - Multiple operators: replace, redact, mask, hash,
   encrypt
 - **Consistent Pseudonymization** - Random number, counter, and cryptographic
-  hash methods
+  hash methods. Maintains consistency within a single request.
 - **Production Ready** - Thread-safe, scalable FastAPI service with
   comprehensive error handling
 
