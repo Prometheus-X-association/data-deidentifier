@@ -23,7 +23,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.ddi.rule=Host(`${APP_EXTERNAL_HOST:-ddi.localhost}`)"
       - "traefik.http.routers.ddi.entrypoints=web"
-      - "traefik.http.services.ddi.loadbalancer.server.port=${APP_INTERNAL_PORT:-8010}"
+      - "traefik.http.services.ddi.loadbalancer.server.port=${APP_INTERNAL_PORT:-8005}"
     logging: *default-logging
     networks:
       - traefik-ddi
@@ -65,7 +65,7 @@ services:
       - "traefik.http.routers.ddi.rule=Host(`${APP_EXTERNAL_HOST}`)"
       - "traefik.http.routers.ddi.entrypoints=websecure"
       - "traefik.http.routers.ddi.tls.certresolver=letsencrypt"
-      - "traefik.http.services.ddi.loadbalancer.server.port=${APP_INTERNAL_PORT:-8010}"
+      - "traefik.http.services.ddi.loadbalancer.server.port=${APP_INTERNAL_PORT:-8005}"
     restart: unless-stopped
     logging: *default-logging
     networks:

@@ -12,6 +12,7 @@
 [![MkDocs](https://img.shields.io/badge/MkDocs-526CFE?logo=markdown)](https://www.mkdocs.org/)
 
 <!-- TOC -->
+
 * [Data deidentifier](#data-deidentifier)
   * [Overview](#overview)
     * [Key Features](#key-features)
@@ -33,6 +34,7 @@
     * [Architecture](#architecture)
   * [Contributing](#contributing)
   * [License](#license)
+
 <!-- TOC -->
 
 ## Overview
@@ -75,6 +77,66 @@ with configurable operators and methods.
 
 ## Setup and installation
 
+You can run the application either directly with **Rye** or using **Docker**.
+
+1. Clone the repository
+2. Set up environment variables:
+   Create a `.env` file in the project root by copying `.env.default`:
+   ```
+   cp .env.default .env
+   ```
+   You can then modify the variables in `.env` as needed.
+
+### With Docker
+
+The application is containerized using Docker, with a robust and flexible
+deployment strategy that leverages:
+
+- Docker for containerization with a multi-environment support (dev and prod)
+  using Docker Compose profiles
+- Traefik as a reverse proxy and load balancer, with built-in SSL/TLS support
+  via Let's Encrypt, and a dashboard in dev environment.
+- Gunicorn as the production-grade WSGI HTTP server, with configurable worker
+  processes and threads, and dynamic scaling based on system resources.
+
+#### Prerequisites
+
+- Docker and Docker Compose installed on your machine.
+
+#### Development Environment
+
+Build and run the development environment:
+
+```
+docker compose --profile dev up --build
+```
+
+The API will be available at : `http://ddi.localhost`
+
+Traefik Dashboard will be available at : `http://traefik.ddi.localhost`
+
+#### Quick Start (Without volumes or Traefik)
+
+For a quick test without full stack:
+
+```
+docker build --target dev-standalone -t ddi:dev-standalone .
+docker run --env-file .env -p 8005:8005 ddi:dev-standalone
+```
+
+Note: This version won't reflect source code changes in real-time.
+
+#### Production Environment
+
+Configure production-specific settings, then build and run the production
+environment:
+
+```
+docker compose --profile prod up --build
+```
+
+### With Rye
+
 ### Prerequisites
 
 - Python 3.13 or higher
@@ -82,20 +144,14 @@ with configurable operators and methods.
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone [repository-url]
-   cd [project_directory]
-   ```
+1. Install Rye, see https://rye.astral.sh/guide/installation/
 
 2. **Install dependencies**
    ```bash
    make init
    ```
 
-3. You can then modify the **environment variables** in `.env` as needed.
-
-4. **Start the server**
+3. **Start the server**
    ```bash
    make start
    ```

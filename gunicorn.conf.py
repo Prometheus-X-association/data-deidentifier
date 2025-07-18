@@ -9,7 +9,7 @@ import os
 # Server Socket
 bind = (
     f"{os.getenv('APP_INTERNAL_HOST', '0.0.0.0')}"  # noqa: S104
-    f":{os.getenv('APP_INTERNAL_PORT', '8010')}"
+    f":{os.getenv('APP_INTERNAL_PORT', '8005')}"
 )
 
 reload = os.getenv("ENVIRONMENT", "development") == "development"
