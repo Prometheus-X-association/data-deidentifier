@@ -6,9 +6,13 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
+          paths: [src/data_deidentifier]
           options:
             docstring_style: google
             members_order: source
             show_source: false
+            merge_init_into_class: true
+            docstring_options:
+              ignore_init_summary: true
             extensions:
               - griffe_inherited_docstrings
