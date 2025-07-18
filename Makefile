@@ -78,3 +78,7 @@ clean: ## Remove temporary files and build artifacts
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
 	rm -rf dist/ build/
+
+.PHONY: start
+start: check-rye ## Start application
+	rye run start
