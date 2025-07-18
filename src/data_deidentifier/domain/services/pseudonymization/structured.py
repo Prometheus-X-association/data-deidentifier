@@ -2,6 +2,9 @@ from typing import Any
 
 from logger import LoggerContract
 
+from src.data_deidentifier.domain.contracts.enricher.manager import (
+    PseudonymEnrichmentManagerContract,
+)
 from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
     StructuredDataPseudonymizerContract,
 )
@@ -35,6 +38,7 @@ class StructuredDataPseudonymizationService:
         pseudonymizer: StructuredDataPseudonymizerContract,
         validator: EntityTypeValidatorContract,
         logger: LoggerContract,
+        pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,
     ) -> None:
         """Initialize the structured data pseudonymization service.
 
@@ -42,10 +46,13 @@ class StructuredDataPseudonymizationService:
             pseudonymizer: Implementation of the data pseudonymization contract
             validator: Implementation of the validator contract
             logger: Logger for logging events
+            pseudonym_enricher: Optional enrichment service for adding contextual
+                information to pseudonyms found in structured data
         """
         self.pseudonymizer = pseudonymizer
         self.validator = validator
         self.logger = logger
+        self.pseudonym_enricher = pseudonym_enricher
 
     def pseudonymize(
         self,
@@ -98,4 +105,5 @@ class StructuredDataPseudonymizationService:
             method=method_instance,
             entity_types=effective_entity_types,
             language=language,
+            pseudonym_enricher=self.pseudonym_enricher,
         )

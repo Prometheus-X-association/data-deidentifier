@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+from src.data_deidentifier.domain.contracts.enricher.manager import (
+    PseudonymEnrichmentManagerContract,
+)
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
 )
@@ -20,6 +23,7 @@ class StructuredDataPseudonymizerContract(ABC):
         method: PseudonymizationMethodContract,
         language: SupportedLanguage,
         entity_types: list[str] | None = None,
+        pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,
     ) -> StructuredDataPseudonymizationResult:
         """Pseudonymize PII entities in structured data.
 
@@ -28,6 +32,8 @@ class StructuredDataPseudonymizerContract(ABC):
             method: Pseudonymization method instance
             language: Language code of the data
             entity_types: Types of entities to detect (None means all supported types)
+            pseudonym_enricher: Optional enrichment service for adding contextual
+                information to pseudonyms found in structured data
 
         Returns:
             A StructuredDataPseudonymizationResult

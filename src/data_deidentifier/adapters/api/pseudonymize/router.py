@@ -1,23 +1,13 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from logger import LoggerContract
 
 from src.data_deidentifier.adapters.api.dependencies import (
     get_config,
-    get_logger,
-    get_structured_pseudonymizer,
-    get_text_pseudonymizer,
-    get_validator,
+    get_structured_data_pseudonymization_service,
+    get_text_pseudonymization_service,
 )
 from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
-from src.data_deidentifier.domain.contracts.pseudonymizer.structured import (
-    StructuredDataPseudonymizerContract,
-)
-from src.data_deidentifier.domain.contracts.pseudonymizer.text import (
-    TextPseudonymizerContract,
-)
-from src.data_deidentifier.domain.contracts.validator import EntityTypeValidatorContract
 from src.data_deidentifier.domain.services.pseudonymization.structured import (
     StructuredDataPseudonymizationService,
 )
@@ -43,22 +33,18 @@ router = APIRouter(prefix="/pseudonymize")
 )
 async def pseudonymize_text(
     query: PseudonymizeTextRequest,
-    pseudonymizer: Annotated[
-        TextPseudonymizerContract,
-        Depends(get_text_pseudonymizer),
+    pseudonymization_service: Annotated[
+        TextPseudonymizationService,
+        Depends(get_text_pseudonymization_service),
     ],
-    validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     config: Annotated[ConfigContract, Depends(get_config)],
-    logger: Annotated[LoggerContract, Depends(get_logger)],
 ) -> PseudonymizeTextResponse:
     """Pseudonymize PII entities in text content.
 
     Args:
         query: The request containing text to pseudonymize
-        pseudonymizer: The text pseudonymizer implementation
-        validator: The validator implementation
+        pseudonymization_service: The text pseudonymization instance
         config: The application configuration
-        logger: The logger instance
 
     Returns:
         Pseudonymized text and information about the entities that were pseudonymized
@@ -72,13 +58,7 @@ async def pseudonymize_text(
     )
     effective_entity_types = query.entity_types or config.get_default_entity_types()
 
-    pseudonymize_service = TextPseudonymizationService(
-        pseudonymizer=pseudonymizer,
-        validator=validator,
-        logger=logger,
-    )
-
-    result = pseudonymize_service.pseudonymize(
+    result = pseudonymization_service.pseudonymize(
         text=query.text,
         method=effective_method,
         method_params=query.method_params,
@@ -106,22 +86,18 @@ async def pseudonymize_text(
 )
 async def pseudonymize_structured(
     query: PseudonymizeStructuredDataRequest,
-    pseudonymizer: Annotated[
-        StructuredDataPseudonymizerContract,
-        Depends(get_structured_pseudonymizer),
+    pseudonymization_service: Annotated[
+        StructuredDataPseudonymizationService,
+        Depends(get_structured_data_pseudonymization_service),
     ],
-    validator: Annotated[EntityTypeValidatorContract, Depends(get_validator)],
     config: Annotated[ConfigContract, Depends(get_config)],
-    logger: Annotated[LoggerContract, Depends(get_logger)],
 ) -> PseudonymizeStructuredDataResponse:
     """Pseudonymize PII entities in structured data.
 
     Args:
         query: The request containing structured data to pseudonymize
-        pseudonymizer: The structured data pseudonymizer implementation
-        validator: The validator implementation
+        pseudonymization_service: The structured data pseudonymization instance
         config: The application configuration
-        logger: The logger instance
 
     Returns:
         Pseudonymized structured data
@@ -131,13 +107,7 @@ async def pseudonymize_structured(
     effective_language = query.language or config.get_default_language()
     effective_entity_types = query.entity_types or config.get_default_entity_types()
 
-    pseudonymize_service = StructuredDataPseudonymizationService(
-        pseudonymizer=pseudonymizer,
-        validator=validator,
-        logger=logger,
-    )
-
-    result = pseudonymize_service.pseudonymize(
+    result = pseudonymization_service.pseudonymize(
         data=query.data,
         method=effective_method,
         method_params=query.method_params,

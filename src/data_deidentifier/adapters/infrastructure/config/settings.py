@@ -1,4 +1,4 @@
-from typing import Annotated, override
+from typing import Annotated, Any, override
 
 from configcore import Settings as CoreSettings
 from pydantic import BeforeValidator, Field
@@ -44,6 +44,10 @@ class Settings(CoreSettings, ConfigContract):
         default=PseudonymizationMethod.RANDOM_NUMBER,
     )
 
+    # Config mappings for entity enrichment (JSON string format), example:
+    # {"LOCATION": {"type": "http", "url": "http://geo-service/enrich"}} # noqa: ERA001
+    enrichment_configurations: dict[str, dict[str, Any]] = Field(default_factory=dict)
+
     @override
     def get_default_language(self) -> SupportedLanguage:
         return self.default_language
@@ -63,3 +67,7 @@ class Settings(CoreSettings, ConfigContract):
     @override
     def get_default_pseudonymization_method(self) -> PseudonymizationMethod:
         return self.default_pseudonymization_method
+
+    @override
+    def get_enrichment_configurations(self) -> dict[str, dict[str, Any]]:
+        return self.enrichment_configurations

@@ -2,8 +2,12 @@ from typing import override
 
 from logger import LoggerContract
 
+from src.data_deidentifier.adapters.infrastructure.config.contract import ConfigContract
 from src.data_deidentifier.adapters.presidio.anonymizer.text import (
     PresidioTextAnonymizer,
+)
+from src.data_deidentifier.domain.contracts.enricher.manager import (
+    PseudonymEnrichmentManagerContract,
 )
 from src.data_deidentifier.domain.contracts.pseudonymizer.method import (
     PseudonymizationMethodContract,
@@ -29,12 +33,14 @@ from .custom_operator import PseudonymizeOperator
 class PresidioTextPseudonymizer(TextPseudonymizerContract):
     """Implementation of text pseudonymizer contract using Microsoft Presidio."""
 
-    def __init__(self, logger: LoggerContract) -> None:
+    def __init__(self, config: ConfigContract, logger: LoggerContract) -> None:
         """Initialize the Presidio text pseudonymizer.
 
         Args:
+            config: Configuration contract
             logger: Logger for logging events
         """
+        self.config = config
         self.logger = logger
 
         self.anonymizer = PresidioTextAnonymizer(logger=self.logger)
@@ -49,6 +55,7 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
         language: SupportedLanguage,
         min_score: float,
         entity_types: list[str] | None = None,
+        pseudonym_enricher: PseudonymEnrichmentManagerContract | None = None,
     ) -> TextPseudonymizationResult:
         logger_context = {
             "method": type(method).__name__,
@@ -65,6 +72,8 @@ class PresidioTextPseudonymizer(TextPseudonymizerContract):
                 entity_types=entity_types,
                 operator_params={
                     PseudonymizeOperator.PARAM_METHOD: method,
+                    PseudonymizeOperator.PARAM_ENRICHER: pseudonym_enricher,
+                    PseudonymizeOperator.PARAM_CONFIG: self.config,
                 },
             )
         except TextAnonymizationError as e:

@@ -13,6 +13,7 @@
 annotated-types==0.7.0
     # via pydantic
 anyio==4.9.0
+    # via httpx
     # via starlette
     # via watchfiles
 babel==2.17.0
@@ -25,7 +26,9 @@ catalogue==2.0.10
     # via spacy
     # via srsly
     # via thinc
-certifi==2025.6.15
+certifi==2025.7.14
+    # via httpcore
+    # via httpx
     # via requests
 cffi==1.17.1
     # via cryptography
@@ -77,13 +80,19 @@ griffe-inherited-docstrings==1.1.1
 gunicorn==23.0.0
     # via data-deidentifier
 h11==0.16.0
+    # via httpcore
     # via uvicorn
+httpcore==1.0.9
+    # via httpx
 httptools==0.6.4
     # via uvicorn
+httpx==0.28.1
+    # via data-deidentifier
 identify==2.6.12
     # via pre-commit
 idna==3.10
     # via anyio
+    # via httpx
     # via requests
     # via tldextract
 iniconfig==2.1.0
@@ -166,11 +175,11 @@ packaging==25.0
     # via weasel
 paginate==0.5.7
     # via mkdocs-material
-pandas==2.3.0
+pandas==2.3.1
     # via presidio-structured
 pathspec==0.12.1
     # via mkdocs
-phonenumbers==8.13.55
+phonenumbers==9.0.9
     # via presidio-analyzer
 pip==25.1.1
     # via data-deidentifier
@@ -185,13 +194,13 @@ pre-commit==4.2.0
 preshed==3.0.10
     # via spacy
     # via thinc
-presidio-analyzer==2.2.358
+presidio-analyzer==2.2.359
     # via data-deidentifier
     # via presidio-structured
-presidio-anonymizer==2.2.358
+presidio-anonymizer==2.2.359
     # via data-deidentifier
     # via presidio-structured
-presidio-structured==0.0.5a0
+presidio-structured==0.0.6
     # via data-deidentifier
 pycparser==2.22
     # via cffi
@@ -275,6 +284,8 @@ srsly==2.5.1
     # via weasel
 starlette==0.46.2
     # via fastapi
+tenacity==9.1.2
+    # via data-deidentifier
 thinc==8.3.6
     # via spacy
 tldextract==5.3.0
@@ -284,7 +295,7 @@ tqdm==4.67.1
 typer==0.16.0
     # via spacy
     # via weasel
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via fastapi
     # via pydantic
     # via pydantic-core

@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Any
 
 from configcore import ConfigContract as CoreConfigContract
 
@@ -57,3 +58,24 @@ class ConfigContract(CoreConfigContract):
         Returns:
             The default pseudonymization method
         """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_enrichment_configurations(self) -> dict[str, dict[str, Any]]:
+        """Get the enrichment configurations for entity types.
+
+        Returns:
+            dict[str, dict[str, Any]]: A mapping of entity types to their
+                enrichment configurations. Keys are entity types (e.g., 'LOCATION')
+                and values are configuration dictionaries containing enricher
+                type and type-specific parameters.
+
+        Examples:
+            {
+                "LOCATION": {
+                    "type": "http",
+                    "url": "http://geo-service/enrich",
+                }
+            }
+        """
+        raise NotImplementedError
