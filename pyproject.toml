@@ -1,6 +1,6 @@
 [project]
 name = "data_deidentifier"
-version = "0.1.0"
+version = "1.0.0"
 description = "Solution for anonymizing textual and structured data"
 authors = [
   { name = "Inokufu", email = "contact@inokufu.com" }
