@@ -350,13 +350,31 @@ make docs-serve        # Serve project documentation locally
 
 ### Environment Variables
 
-| Variable                          | Description                        | Required | Default Value   | Possible Values                                |
-|-----------------------------------|------------------------------------|----------|-----------------|------------------------------------------------|
-| `DEFAULT_LANGUAGE`                | Default language for text analysis | No       | `en`            | `en`                                           |
-| `DEFAULT_MINIMUM_SCORE`           | Default confidence threshold       | No       | `0.5`           | `0.0` to `1.0`                                 |
-| `DEFAULT_ANONYMIZATION_OPERATOR`  | Default anonymization method       | No       | `replace`       | `replace`, `redact`, `mask`, `hash`, `encrypt` |
-| `DEFAULT_PSEUDONYMIZATION_METHOD` | Default pseudonymization method    | No       | `random_number` | `random_number`, `counter`, `crypto_hash`      |
-| `ENRICHMENT_CONFIGURATIONS`       | Entity enrichment service configs  | No       | `{}`            | JSON object                                    |
+| Variable                               | Description                                                   | Required | Default Value      | Possible Values                                 |
+|----------------------------------------|---------------------------------------------------------------|----------|--------------------|-------------------------------------------------|
+| **Application Configuration**          |                                                               |          |                    |                                                 |
+| `DEFAULT_LANGUAGE`                     | Default language for text analysis                            | No       | `en`               | `en`                                            |
+| `DEFAULT_MINIMUM_SCORE`                | Default confidence threshold                                  | No       | `0.5`              | `0.0` to `1.0`                                  |
+| `DEFAULT_ANONYMIZATION_OPERATOR`       | Default anonymization method                                  | No       | `replace`          | `replace`, `redact`, `mask`, `hash`, `encrypt`  |
+| `DEFAULT_PSEUDONYMIZATION_METHOD`      | Default pseudonymization method                               | No       | `random_number`    | `random_number`, `counter`, `crypto_hash`       |
+| `ENRICHMENT_CONFIGURATIONS`            | Entity enrichment service configs                             | No       | `{}`               | JSON object                                     |
+| **Environment Configuration**          |                                                               |          |                    |                                                 |
+| `ENVIRONMENT`                          | Affects error handling and logging throughout the application | No       | `development`      | `development`, `production`                     |
+| `LOG_LEVEL`                            | Minimum logging level                                         | No       | `info`             | `debug`, `info`, `warning`, `error`, `critical` |
+| **Internal Application Configuration** |                                                               |          |                    |                                                 |
+| `APP_INTERNAL_HOST`                    | Host for internal application binding                         | No       | `0.0.0.0`          | Valid host/IP                                   |
+| `APP_INTERNAL_PORT`                    | Port for internal application binding                         | No       | `8005`             | Any valid port                                  |
+| **External Routing Configuration**     |                                                               |          |                    |                                                 |
+| `APP_EXTERNAL_HOST`                    | External hostname for the application                         | Yes      | `ddi.localhost`    | Valid hostname                                  |
+| `APP_EXTERNAL_PORT`                    | External port for routing (dev env only)                      | No       | `80`               | Any valid port                                  |
+| **Traefik Configuration**              |                                                               |          |                    |                                                 |
+| `TRAEFIK_RELEASE`                      | Traefik image version                                         | No       | `v3.4.4`           | Valid Traefik version                           |
+| `LETS_ENCRYPT_EMAIL`                   | Email for Let's Encrypt certificate                           | Yes      | `test@example.com` | Valid email                                     |
+| **Performance Configuration**          |                                                               |          |                    |                                                 |
+| `WORKERS_COUNT`                        | Number of worker processes                                    | No       | `4`                | Positive integer                                |
+| `THREADS_PER_WORKER`                   | Number of threads per worker                                  | No       | `2`                | Positive integer                                |
+
+Refer to `.env.default` for a complete list of configurable environment variables and their default values.
 
 ### Architecture
 
