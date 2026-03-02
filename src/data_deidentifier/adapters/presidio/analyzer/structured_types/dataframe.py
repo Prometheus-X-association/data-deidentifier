@@ -10,7 +10,7 @@ from presidio_structured.data.data_processors import (
     PandasDataProcessor,
 )
 
-from src.data_deidentifier.domain.types.language import SupportedLanguage
+from data_deidentifier.domain.types.language import SupportedLanguage
 
 from .structured_type import StructuredTypeAnalyzer
 
@@ -34,10 +34,10 @@ class DataFrameAnalyzer(StructuredTypeAnalyzer):
     ) -> StructuredAnalysis:
         self.logger.debug("Analyzing DataFrame", {"nb_rows": len(data)})
 
-        analyzer = PandasAnalysisBuilder()
+        analyzer = PandasAnalysisBuilder(analyzer=self.analyzer_engine)
         return analyzer.generate_analysis(
             df=data,
-            language=language,
+            language=language.value.lower(),
         )
 
     @override

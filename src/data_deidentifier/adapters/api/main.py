@@ -5,10 +5,12 @@ from typing import Any
 from fastapi import FastAPI
 from logger import LogLevel, LoguruLogger
 
-from src.data_deidentifier.adapters.infrastructure.config.settings import Settings
+from data_deidentifier.adapters.infrastructure.config.settings import Settings
 
 from .anonymize.router import router as anonymize_router
+from .dependencies import get_engine_factory
 from .exception_handler import ExceptionHandler
+from .infrastructure.router import router as infra_router
 from .pseudonymize.router import router as pseudonymize_router
 
 config = Settings()
@@ -24,7 +26,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[dict[str, Any]]:
     Yields:
         A dictionary containing logger and config objects
     """
-    logger = LoguruLogger(level=config.get_log_level())
+    logger = LoguruLogger(level=LogLevel[config.get_log_level().name])
     logger.info(
         "Application starting",
         {
@@ -32,6 +34,9 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[dict[str, Any]]:
             "app_env": config.get_environment().name,
         },
     )
+
+    # Pre-load Nlp models to avoid cold-start latency
+    get_engine_factory().warmup(logger=logger)
 
     yield {"config": config, "logger": logger}
 
@@ -50,3 +55,4 @@ exception_handler.configure(app=app)
 
 app.include_router(router=anonymize_router)
 app.include_router(router=pseudonymize_router)
+app.include_router(router=infra_router)

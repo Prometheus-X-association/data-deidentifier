@@ -9,7 +9,7 @@ from presidio_structured.data.data_processors import (
     JsonDataProcessor,
 )
 
-from src.data_deidentifier.domain.types.language import SupportedLanguage
+from data_deidentifier.domain.types.language import SupportedLanguage
 
 from .structured_type import StructuredTypeAnalyzer
 
@@ -29,10 +29,10 @@ class JsonAnalyzer(StructuredTypeAnalyzer):
     def analyze(self, data: Any, language: SupportedLanguage) -> StructuredAnalysis:
         self.logger.debug("Analyzing JSON data", {"nb_keys": len(data)})
 
-        analyzer = JsonAnalysisBuilder()
+        analyzer = JsonAnalysisBuilder(analyzer=self.analyzer_engine)
         return analyzer.generate_analysis(
             data=data,
-            language=language,
+            language=language.value.lower(),
         )
 
     @override

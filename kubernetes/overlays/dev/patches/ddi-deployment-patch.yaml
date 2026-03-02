@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ddi
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: ddi
+          imagePullPolicy: Never
+          resources:
+            limits:
+              cpu: "800m"
+              memory: "1.8Gi"
+            requests:
+              cpu: "500m"
+              memory: "1.6Gi"

@@ -1,7 +1,8 @@
 from logger import LoggerContract
+from presidio_analyzer import AnalyzerEngine
 
-from src.data_deidentifier.domain.exceptions import UnsupportedStructuredDataError
-from src.data_deidentifier.domain.types.structured_data import StructuredData
+from data_deidentifier.domain.exceptions import UnsupportedStructuredDataError
+from data_deidentifier.domain.types.structured_data import StructuredData
 
 from .dataframe import DataFrameAnalyzer
 from .JSON import JsonAnalyzer
@@ -19,16 +20,17 @@ class StructuredDataAnalyzerFactory:
         analyzers: List of registered analyzer instances.
     """
 
-    def __init__(self, logger: LoggerContract) -> None:
+    def __init__(self, logger: LoggerContract, analyzer_engine: AnalyzerEngine) -> None:
         """Initialize the factory with default analyzers.
 
         Args:
             logger: Logger instance for logging events.
+            analyzer_engine: Presidio AnalyzerEngine for PII detection.
         """
         self.logger = logger
         self.analyzers: list[StructuredTypeAnalyzer] = [
-            JsonAnalyzer(logger=self.logger),
-            DataFrameAnalyzer(logger=self.logger),
+            JsonAnalyzer(logger=self.logger, analyzer_engine=analyzer_engine),
+            DataFrameAnalyzer(logger=self.logger, analyzer_engine=analyzer_engine),
         ]
 
     def get_analyzer(self, data: StructuredData) -> StructuredTypeAnalyzer:
