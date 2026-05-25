@@ -24,9 +24,12 @@
       * [Development Environment](#development-environment)
       * [Quick Start (Without volumes or Traefik)](#quick-start-without-volumes-or-traefik)
       * [Production Environment](#production-environment)
+    * [With Kubernetes](#with-kubernetes)
+      * [Prerequisites](#prerequisites-1)
+      * [Kustomize structure](#kustomize-structure)
     * [With uv](#with-uv)
-    * [Prerequisites](#prerequisites-1)
-    * [Installation](#installation)
+      * [Prerequisites](#prerequisites-2)
+      * [Installation](#installation)
   * [Usage](#usage)
     * [Text Anonymization](#text-anonymization)
     * [Structured Data Anonymization](#structured-data-anonymization)
@@ -140,14 +143,29 @@ environment:
 docker compose --profile prod up --build
 ```
 
+### With Kubernetes
+
+The application can be deployed on Kubernetes using Kustomize, with a `base` layer and `dev`, `staging`, and `prod` overlays under `kubernetes/overlays/`.
+
+#### Prerequisites
+
+- A Kubernetes cluster with nginx-ingress and cert-manager installed.
+
+#### Kustomize structure
+
+- **`kubernetes/base/`** — Generic manifests with placeholder values
+- **`kubernetes/overlays/<env>/`** — Environment-specific tuning
+
+Deployment-specific values are **not committed to git** and must be set manually when applying the overlay, or injected at build or runtime.
+
 ### With uv
 
-### Prerequisites
+#### Prerequisites
 
 - Python 3.13 or higher
 - [uv](https://docs.astral.sh/uv/) for dependency management
 
-### Installation
+#### Installation
 
 1. Install uv, see https://docs.astral.sh/uv/getting-started/installation/
 
@@ -209,22 +227,23 @@ Response:
 
 ### Structured Data Anonymization
 
+Supports nested JSON objects and arrays. Entities are replaced **within** the
+field value, preserving surrounding context.
+
 ```bash
 curl -X POST "http://localhost:8005/anonymize/structured" \
   -H "Content-Type: application/json" \
   -d '{
     "data": {
-      "user": {
-        "name": "Alice Johnson",
-        "email": "alice@company.com",
-        "address": "123 Main St, Boston"
-      }
+      "users": [
+        {
+          "name": "Alice Johnson",
+          "bio": "Alice Johnson can be reached at alice@company.com"
+        }
+      ]
     },
-    "operator": "mask",
-    "operator_params": {
-      "masking_char":"*",
-      "chars_to_mask":999
-    }
+    "operator": "replace",
+    "min_score": 0.7
   }'
 ```
 
@@ -233,16 +252,16 @@ Response:
 ```json
 {
   "anonymized_data": {
-    "user": {
-      "name": "*************",
-      "email": "*****************",
-      "address": "*******************"
-    }
+    "users": [
+      {
+        "name": "<PERSON>",
+        "bio": "<PERSON> can be reached at <EMAIL_ADDRESS>"
+      }
+    ]
   },
   "detected_fields": {
-    "user.name": "PERSON",
-    "user.email": "EMAIL_ADDRESS",
-    "user.address": "LOCATION"
+    "users.0.name": "PERSON",
+    "users.0.bio": "PERSON, EMAIL_ADDRESS"
   }
 }
 ```
