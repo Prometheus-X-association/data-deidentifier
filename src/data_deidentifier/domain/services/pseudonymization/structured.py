@@ -56,6 +56,7 @@ class StructuredDataPseudonymizationService:
 
     def pseudonymize(  # noqa: PLR0913
         self,
+        *,
         data: StructuredData,
         method: PseudonymizationMethod,
         language: SupportedLanguage,

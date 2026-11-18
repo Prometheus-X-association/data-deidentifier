@@ -138,7 +138,7 @@ class ExceptionHandler:
         if exc.__cause__ is not None:
             details["cause"] = str(exc.__cause__)
 
-        request.state.logger.exception(
+        request.state.logger.exception(  # noqa: LOG004
             "HTTP Error",
             exc,
             {

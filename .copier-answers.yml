@@ -1,8 +1,9 @@
 # Changes here will be overwritten by Copier
-_commit: 0049f24
+_commit: c2042bb
 _src_path: git@github.com:inokufu/python-project-template.git
 author_email: contact@inokufu.com
 author_name: Inokufu
+default_branch: main
 min_python_version: '3.13'
 package_name: data_deidentifier
 project_description: Solution for anonymizing textual and structured data

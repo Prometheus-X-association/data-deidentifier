@@ -38,6 +38,7 @@ class StructuredDataAnonymizationService:
 
     def anonymize(  # noqa: PLR0913
         self,
+        *,
         data: StructuredData,
         operator: AnonymizationOperator,
         language: SupportedLanguage,
