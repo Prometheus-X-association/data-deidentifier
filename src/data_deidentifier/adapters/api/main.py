@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -17,7 +17,7 @@ config = Settings()
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI) -> AsyncIterator[dict[str, Any]]:
+async def lifespan(_app: FastAPI) -> AsyncGenerator[dict[str, Any]]:
     """Lifespan context manager for the FastAPI application.
 
     Args:

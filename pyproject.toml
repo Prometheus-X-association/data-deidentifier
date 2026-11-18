@@ -1,6 +1,6 @@
 [project]
 name = "data_deidentifier"
-version = "1.4.0"
+version = "1.4.1"
 description = "Solution for anonymizing textual and structured data"
 authors = [
   { name = "Inokufu", email = "contact@inokufu.com" }
@@ -9,44 +9,44 @@ readme = "docs/README.md"
 requires-python = ">= 3.13"
 
 dependencies = [
-    "pip>=26.1.1,<26.2.0",
-    "presidio-analyzer>=2.2.362,<2.3.0",
-    "presidio-anonymizer>=2.2.362,<2.3.0",
-    "presidio-structured>=0.0.6,<0.0.7",
-    "spacy>=3.8.14,<3.9.0",
     "en-core-web-lg",
     "fr-core-news-lg",
-    "uvicorn[standard]>=0.48.0,<0.48.1",
-    "gunicorn>=26.0.0,<26.1.0",
-    "fastapi>=0.136.3,<0.136.4",
-    "httpx>=0.28.1,<0.28.2",
-    "tenacity>=9.1.4,<9.2.0",
     "logger",
     "configcore",
+    "pip>=26.3,<27.0",
+    "presidio-analyzer>=2.2.366,<3.0.0",
+    "presidio-anonymizer>=2.2.366,<3.0.0",
+    "presidio-structured>=0.0.10,<0.0.11",
+    "spacy>=3.8.18,<4.0.0",
+    "uvicorn[standard]>=0.54.0,<0.55.0",
+    "gunicorn>=27.0.1,<28.0.0",
+    "fastapi>=0.164.0,<0.165.0",
+    "httpx>=0.28.1,<0.29.0",
+    "tenacity>=9.2.1,<10.0.0",
 ]
 
 [dependency-groups]
 dev = [
-    "diff-cover>=10.2.0,<10.3.0",
-    "griffe-inherited-docstrings>=1.1.3,<1.2.0",
-    "mkdocs>=1.6.1,<1.7.0",
-    "mkdocs-material>=9.7.6,<9.8.0",
-    "mkdocstrings-python>=2.0.3,<2.1.0",
-    "pre-commit>=4.5.1,<4.6.0",
-    "pytest>=9.0.2,<9.1.0",
-    "pytest-cov>=7.1.0,<7.2.0",
-    "pytest-mock>=3.15.1,<3.16.0",
-    "ruff>=0.15.8,<0.15.9",
-    "ty>=0.0.26,<0.0.27",
+    "diff-cover>=11.0.3,<12.0.0",
+    "griffe-inherited-docstrings>=1.1.4,<2.0.0",
+    "mkdocs>=1.6.1,<2.0.0",
+    "mkdocs-material>=9.8.1,<10.0.0",
+    "mkdocstrings-python>=2.0.11,<3.0.0",
+    "prek>=0.5.11,<0.6.0",
+    "pytest>=9.2.0,<10.0.0",
+    "pytest-cov>=7.1.0,<8.0.0",
+    "pytest-mock>=3.17.0,<4.0.0",
+    "ruff>=0.17.5,<0.18.0",
+    "ty>=0.0.106,<0.0.107",
 ]
 
 [tool.uv]
-add-bounds = "minor"
+add-bounds = "major"
 package = true
 
 [tool.uv.sources]
-logger = { git = "https://github.com/inokufu/python-logger", tag = "v0.3.2" }
-configcore = { git = "https://github.com/inokufu/python-config", tag = "v0.3.2" }
+logger = { git = "https://github.com/inokufu/python-logger", tag = "v0.4.0" }
+configcore = { git = "https://github.com/inokufu/python-config", tag = "v0.4.0" }
 en-core-web-lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl" }
 fr-core-news-lg = { url = "https://github.com/explosion/spacy-models/releases/download/fr_core_news_lg-3.8.0/fr_core_news_lg-3.8.0-py3-none-any.whl" }
 
@@ -73,6 +73,7 @@ lint.ignore = [
   "TRY003", # raise-vanilla-args
   "TRY401", # verbose-log-message
   "TC", # type-checking blocks
+  "CPY", # flake8-copyright
 ]
 lint.extend-unfixable = [
   "TC002", # typing-only-third-party-import
@@ -87,11 +88,13 @@ lint.extend-unfixable = [
     "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
     "PLR2004", # Magic value used in comparison, ...
     "S311", # Standard pseudo-random generators are not suitable for cryptographic purposes
+    "S105", # Hardcoded secrets are dummy test fixtures...
+    "S106", # ...idem for secrets passed as arguments
 ]
 
 [tool.pytest.ini_options]
 pythonpath = [".", "src"]
-addopts = ["--cov=src", "--cov-report=term", "--cov-report=xml"]
+addopts = ["--cov=src", "--cov-report=term-missing", "--cov-report=xml"]
 
 [tool.coverage.report]
 exclude_also = [

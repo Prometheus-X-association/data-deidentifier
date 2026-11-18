@@ -19,6 +19,7 @@ class StructuredDataPseudonymizerContract(ABC):
     @abstractmethod
     def pseudonymize(  # noqa: PLR0913
         self,
+        *,
         data: StructuredData,
         method: PseudonymizationMethodContract,
         language: SupportedLanguage,

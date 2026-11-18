@@ -18,6 +18,7 @@ class TextPseudonymizerContract(ABC):
     @abstractmethod
     def pseudonymize(  # noqa: PLR0913
         self,
+        *,
         text: str,
         method: PseudonymizationMethodContract,
         language: SupportedLanguage,

@@ -55,6 +55,7 @@ class TextPseudonymizationService:
 
     def pseudonymize(  # noqa: PLR0913
         self,
+        *,
         text: str,
         method: PseudonymizationMethod,
         language: SupportedLanguage,
