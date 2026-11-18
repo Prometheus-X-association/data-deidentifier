@@ -17,6 +17,7 @@ class StructuredDataAnonymizerContract(ABC):
     @abstractmethod
     def anonymize(  # noqa: PLR0913
         self,
+        *,
         data: StructuredData,
         operator: AnonymizationOperator,
         language: SupportedLanguage,

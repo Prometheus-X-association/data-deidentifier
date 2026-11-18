@@ -39,6 +39,7 @@ class TextAnonymizationService:
 
     def anonymize(  # noqa: PLR0913
         self,
+        *,
         text: str,
         operator: AnonymizationOperator,
         language: SupportedLanguage,
